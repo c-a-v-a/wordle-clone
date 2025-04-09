@@ -1,0 +1,2 @@
+#!/bin/sh
+mvn checkstyle:check -Dmaven.repo.local=./.m2/repository

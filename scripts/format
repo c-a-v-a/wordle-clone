@@ -1,0 +1,2 @@
+#!/bin/sh
+mvn googleformatter:format -Dmaven.repo.local=./.m2/repository

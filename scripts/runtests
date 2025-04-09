@@ -1,0 +1,2 @@
+#!/bin/sh
+mvn clean test -Dmaven.repo.local=./.m2/repository

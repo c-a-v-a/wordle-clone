@@ -1,0 +1,2 @@
+#!/bin/sh
+mvn clean package -q -Dmaven.repo.local=./.m2/repository && java -jar target/wordle-clone*
