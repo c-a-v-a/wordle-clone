@@ -1,2 +1,4 @@
 #!/bin/sh
-mvn clean site -Dmaven.repo.local=./.m2/repository
+mvn clean site -Dmaven.repo.local=./.m2/repository &&
+	mv cli/target/site target/site/wordle-clone-cli &&
+	mv lib/target/site target/site/wordle-clone-lib

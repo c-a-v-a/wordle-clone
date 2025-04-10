@@ -1,0 +1,28 @@
+#!/bin/sh
+
+PROJECT_ROOT=$(git rev-parse --show-toplevel)
+
+# format
+mvn googleformatter:format -q -Dmaven.repo.local="$PROJECT_ROOT"/.m2/repository
+
+# check
+mvn checkstyle:check -q -Dmaven.repo.local="$PROJECT_ROOT"/.m2/repository
+
+CHECK_RESULT=$?
+
+if [ $CHECK_RESULT -ne 0 ]; then
+  echo "Maven checkstyle failed. Commit aborted."
+  exit 1
+fi
+
+# tests
+mvn clean test -q -Dmaven.repo.local="$PROJECT_ROOT"/.m2/repository
+
+TEST_RESULT=$?
+
+if [ $TEST_RESULT -ne 0 ]; then
+  echo "Maven tests failed. Commit aborted."
+  exit 1
+fi
+
+exit 0

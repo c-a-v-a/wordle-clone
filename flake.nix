@@ -18,7 +18,7 @@
             shellHook = ''
               alias check='./scripts/check'
               alias format='./scripts/format'
-              alias package='./scripts/package'
+              alias runcli='./scripts/runcli'
               alias report='./scripts/report'
               alias runtests='./scripts/runtests'
             '';

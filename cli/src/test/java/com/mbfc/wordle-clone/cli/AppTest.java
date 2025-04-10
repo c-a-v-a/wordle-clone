@@ -1,4 +1,4 @@
-package com.mbfc.app;
+package com.mbfc.wordleclone.cli;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
