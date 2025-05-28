@@ -67,6 +67,11 @@
         <version>0.8.13</version>
         <executions>
           <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
             <id>report</id>
             <phase>site</phase>
             <goals>
@@ -163,13 +168,6 @@
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>0.8.13</version>
-        <reportSets>
-          <reportSet>
-            <reports>
-              <report>report-aggregate</report>
-            </reports>
-          </reportSet>
-        </reportSets>
       </plugin>
     </plugins>
   </reporting>
