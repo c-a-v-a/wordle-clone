@@ -1,6 +1,8 @@
 package com.mbfc.wordleclone.lib.parser;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -53,9 +55,26 @@ public class SimpleStringParser implements Parser<String> {
     }
   }
 
-  // TODO: Implement the simple parser for the system files.
+  /**
+   * {@inheritDoc}
+   *
+   * <p>This implementation reads the file line by line and returns each line as a separate string
+   * in the list.
+   */
   @Override
   public List<String> parseFile(String filePath) throws IOException {
-    throw new UnsupportedOperationException("Not yet implemented");
+    File file = new File(filePath);
+
+    if (!file.exists()) {
+      throw new IOException("File not found: " + filePath);
+    }
+
+    try {
+      BufferedReader reader = new BufferedReader(new FileReader(file));
+
+      return reader.lines().collect(Collectors.toList());
+    } catch (Exception e) {
+      throw new IOException("Unable to read the file: " + filePath, e);
+    }
   }
 }
