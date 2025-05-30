@@ -6,17 +6,15 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
 
-/**
- * Unit tests for the {@link App} class.
- */
+/** Unit tests for the {@link App} class. */
 public class AppTest {
 
     /**
-     * Tests that the main method runs and terminates gracefully when provided with an exit option.
+     * Tests that the main application exits gracefully when the Exit option is selected.
      */
     @Test
-    public void testAppMainExitsGracefully() {
-        // Simulate user input that immediately selects "Exit" (option 3).
+    void app_main_exitsGracefully() {
+        // Simulate input that immediately selects "3" (Exit) at the main menu.
         String simulatedInput = "3\n";
         InputStream originalIn = System.in;
         try {
