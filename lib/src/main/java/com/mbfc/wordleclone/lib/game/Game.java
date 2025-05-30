@@ -82,17 +82,16 @@ public abstract class Game<T, U> {
   }
 
   public int getTriesLeft() {
-      return triesLeft;
+    return triesLeft;
   }
 
   public GameBoard<T> getBoard() {
-      return board;
+    return board;
   }
 
   public T getTarget() {
-      return target;
+    return target;
   }
-
 
   /**
    * Validates wether a given guess is acceptable according to rules.
