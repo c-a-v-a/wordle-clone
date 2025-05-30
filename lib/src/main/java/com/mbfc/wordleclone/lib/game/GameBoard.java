@@ -2,7 +2,6 @@ package com.mbfc.wordleclone.lib.game;
 
 import com.mbfc.wordleclone.lib.comparator.ComparatorResult;
 import com.mbfc.wordleclone.lib.util.Pair;
-import java.lang.IndexOutOfBoundsException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

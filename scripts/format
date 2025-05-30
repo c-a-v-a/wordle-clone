@@ -1,2 +1,2 @@
 #!/bin/sh
-mvn googleformatter:format -Dmaven.repo.local=./.m2/repository
+mvn spotless:apply -Dmaven.repo.local=./.m2/repository 
