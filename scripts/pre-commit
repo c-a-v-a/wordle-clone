@@ -3,7 +3,7 @@
 PROJECT_ROOT=$(git rev-parse --show-toplevel)
 
 # format
-mvn googleformatter:format -q -Dmaven.repo.local="$PROJECT_ROOT"/.m2/repository
+mvn spotless:apply -q -Dmaven.repo.local="$PROJECT_ROOT"/.m2/repository
 
 # check
 mvn checkstyle:check -q -Dmaven.repo.local="$PROJECT_ROOT"/.m2/repository
