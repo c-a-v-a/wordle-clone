@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.mbfc.wordleclone.lib.comparator.ComparatorResult;
 import com.mbfc.wordleclone.lib.comparator.CompareException;
 import com.mbfc.wordleclone.lib.comparator.StringComparator;
 import java.util.ArrayList;
