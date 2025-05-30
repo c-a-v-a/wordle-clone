@@ -18,185 +18,146 @@ import org.junit.jupiter.api.Test;
 public class SimpleGameTest {
   private StringComparator comparator;
   private List<String> emptyList;
-  private List<String> simpleList;
-  private int tries;
+  private List<String> validWordList;
+  private int lives;
 
   @BeforeEach
   void setUp() {
     comparator = new StringComparator();
-    emptyList = new ArrayList<String>();
-    simpleList = new ArrayList<String>(Arrays.asList("abc", "def", "ghi"));
-    tries = 6;
+    emptyList = new ArrayList<>();
+    validWordList = new ArrayList<>(Arrays.asList("abc", "def", "ghi"));
+    lives = 6;
   }
 
-  /** Test that guess of invalid length does throw the exception. */
+  /** Test that comparing strings of different lengths throws an exception. */
   @Test
-  void validate_invalidLenght_throwGameException() throws GameException {
-    // given
-    SimpleGame game = new SimpleGame(comparator, simpleList, tries);
+  void compare_differentLengths_throwsException() {
+    String guess = "abc";
+    String target = "a";
+    String expectedMessage = "Cannot compare \"abc\" to \"a\". Strings have different length.";
 
-    // when
+    Exception exception =
+        assertThrows(
+            CompareException.class,
+            () -> {
+              comparator.compare(guess, target);
+            });
+    assertEquals(expectedMessage, exception.getMessage());
+  }
+
+  /** Test that validate throws GameException when guess has an invalid length. */
+  @Test
+  void validate_invalidLength_throwsGameException() {
+    SimpleGame game = new SimpleGame(comparator, validWordList, lives);
     Exception exception =
         assertThrows(
             GameException.class,
             () -> {
               game.validate("a");
             });
-
-    // then
     assertEquals(
         "Invalid guess. The length of guess and target does not match.", exception.getMessage());
   }
 
-  /** Test that guess not in the list does throw the exception. */
+  /** Test that validate throws GameException when guess is not present in the word list. */
   @Test
-  void validate_guessNotInTheList_throwGameException() throws GameException {
-    // given
-    SimpleGame game = new SimpleGame(comparator, simpleList, tries);
-
-    // when
+  void validate_guessNotInTheList_throwsGameException() {
+    SimpleGame game = new SimpleGame(comparator, validWordList, lives);
     Exception exception =
         assertThrows(
             GameException.class,
             () -> {
               game.validate("aaa");
             });
-
-    // then
     assertEquals("Invalid guess. The guess is not in the word list.", exception.getMessage());
   }
 
-  /** Test that game cannot be created with empty guess list. */
+  /** Test that constructing a game with an empty word list throws NoSuchElementException. */
   @Test
-  void constructor_emptyList_throwNoSuchElementException() throws NoSuchElementException {
-    // given
-    Exception exception =
-        assertThrows(
-            NoSuchElementException.class,
-            () -> {
-              new SimpleGame(comparator, emptyList, tries);
-            });
-
-    // when
-
-    // then
-    assertNotNull(exception);
+  void constructor_emptyList_throwsNoSuchElementException() {
+    assertThrows(
+        NoSuchElementException.class,
+        () -> {
+          new SimpleGame(comparator, emptyList, lives);
+        });
   }
 
-  /** Test that target is selected randomly from the guess list. */
+  /** Test that the target is selected from the word list. */
   @Test
-  void selectRandomTarget_simpleList_targetInList() throws NoSuchElementException {
-    // given
-    SimpleGame game = new SimpleGame(comparator, simpleList, tries);
-
-    // when
+  void selectRandomTarget_targetIsInWordList() {
+    SimpleGame game = new SimpleGame(comparator, validWordList, lives);
     String target = game.target;
-
-    // then
-    assertTrue(simpleList.contains(target));
+    assertTrue(validWordList.contains(target));
   }
 
-  /** Test that playing empty string is not valid. */
+  /** Test that playing an empty string throws a GameException. */
   @Test
-  void play_emptyString_throwGameException() throws CompareException, GameException {
-    // given
-    SimpleGame game = new SimpleGame(comparator, simpleList, tries);
-
-    // when
+  void play_emptyString_throwsGameException() {
+    SimpleGame game = new SimpleGame(comparator, validWordList, lives);
     Exception exception =
         assertThrows(
             GameException.class,
             () -> {
               game.play("");
             });
-
-    // then
     assertEquals(
         "Invalid guess. The length of guess and target does not match.", exception.getMessage());
   }
 
-  /** Test that playing string not in the guess list is not valid. */
+  /** Test that playing a guess not in the list throws a GameException. */
   @Test
-  void play_guessNotInTheList_throwGameException() throws CompareException, GameException {
-    // given
-    SimpleGame game = new SimpleGame(comparator, simpleList, tries);
-
-    // when
+  void play_guessNotInTheList_throwsGameException() {
+    SimpleGame game = new SimpleGame(comparator, validWordList, lives);
     Exception exception =
         assertThrows(
             GameException.class,
             () -> {
               game.play("aaa");
             });
-
-    // then
     assertEquals("Invalid guess. The guess is not in the word list.", exception.getMessage());
   }
 
-  /** Test that playing string from guess list is valid. */
+  /** Test that playing a valid guess returns a non-empty game board. */
   @Test
-  void play_guessInTheList_validGameBoard() throws CompareException, GameException {
-    // given
-    SimpleGame game = new SimpleGame(comparator, simpleList, tries);
-
-    // when
+  void play_validGuess_returnsNonEmptyGameBoard() throws CompareException, GameException {
+    SimpleGame game = new SimpleGame(comparator, validWordList, lives);
     GameBoard board = game.play("abc");
-
-    // then
     assertNotNull(board);
     assertTrue(!board.isEmpty());
-    assertEquals(tries - 1, game.triesLeft);
+    assertEquals(lives - 1, game.getTriesLeft());
   }
 
-  /** Test that player can win and his win ends the game. */
+  /** Test that a correct guess results in a win and the game is finished. */
   @Test
-  void play_targetGuessed_gameFinishedAndPlayerWon() throws CompareException, GameException {
-    // given
-    SimpleGame game = new SimpleGame(comparator, simpleList, tries);
-
-    // when
-    GameBoard board = game.play(game.target);
-
-    // then
+  void play_correctGuess_gameFinishedAndPlayerWon() throws CompareException, GameException {
+    SimpleGame game = new SimpleGame(comparator, validWordList, lives);
+    game.play(game.target);
     assertTrue(game.getPlayerWon());
     assertTrue(game.getGameFinished());
   }
 
-  /** Test that player can loose. */
+  /** Test that running out of lives leads to game finished and a loss. */
   @Test
-  void play_runOutOfTries_gameFinishedAndPlayerLoose() throws CompareException, GameException {
-    // given
-    SimpleGame game = new SimpleGame(comparator, simpleList, tries);
+  void play_runOutOfLives_gameFinishedAndPlayerLost() throws CompareException, GameException {
+    SimpleGame game = new SimpleGame(comparator, validWordList, lives);
     game.target = "abc";
     game.triesLeft = 1;
-
-    // when
-    GameBoard board = game.play("def");
-
-    // then
+    game.play("def");
     assertTrue(!game.getPlayerWon());
     assertTrue(game.getGameFinished());
   }
 
-  /** Test if the reset is resetting the game. */
+  /** Test that calling reset resets the game state properly. */
   @Test
-  void reset_playedGame_cleanGame() throws CompareException, GameException {
-    // given
-    SimpleGame game = new SimpleGame(comparator, simpleList, tries);
-    game.target = "ddd";
-
+  void reset_calledAfterPlay_resetsGameState() throws CompareException, GameException {
+    SimpleGame game = new SimpleGame(comparator, validWordList, lives);
+    game.target = "ddd"; // Force a specific target
     game.play("abc");
-
-    int triesLeft = game.triesLeft;
-
-    // when
+    int livesBeforeReset = game.getTriesLeft();
     game.reset();
-
-    // then
     assertTrue(game.board.isEmpty());
-    assertEquals(triesLeft + 1, game.triesLeft);
-    assertEquals(tries, game.triesLeft);
-    assertEquals(game.maxTries, game.triesLeft);
-    assertTrue(!game.target.equals("ddd"));
+    // After reset, triesLeft should equal maxTries
+    assertEquals(game.maxTries, game.getTriesLeft());
+    assertTrue(!"ddd".equals(game.target));
   }
 }
