@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
  * <p>This clas provides the structure and api, for every possible game type.
  *
  * @param <T> the type of values used in game
- * @param <U> the type of guess list, should generaly be a collection of {@code T} type elements
+ * @param <U> the type of guess list, should generally be a collection of {@code T} type elements
  */
 public abstract class Game<T, U> {
 
@@ -64,7 +64,7 @@ public abstract class Game<T, U> {
   public Game(Comparator<T> comparator, U guessList, int tries) throws NoSuchElementException {
     this.comparator = comparator;
     this.guessList = guessList;
-    this.board = new GameBoard<T>();
+    this.board = new GameBoard<>();
     this.maxTries = tries;
     this.triesLeft = tries;
     this.gameFinished = false;
@@ -94,7 +94,7 @@ public abstract class Game<T, U> {
   }
 
   /**
-   * Validates wether a given guess is acceptable according to rules.
+   * Validates whether a given guess is acceptable according to rules.
    *
    * @param guess the guess to validate
    * @throws GameException if the guess is not valid
@@ -126,6 +126,8 @@ public abstract class Game<T, U> {
    *
    * <p>This function just sets the according flags, {@link Game#playerWon} and {@link
    * Game#gameFinished}.
+   *
+   * @param result results of the last user's guess
    */
   public void isGameFinished(List<ComparatorResult> result) {
     playerWon = result.stream().allMatch(x -> x.equals(ComparatorResult.CORRECT));
@@ -138,7 +140,7 @@ public abstract class Game<T, U> {
    * <p>Clears the board, resets the number of attempts and selects new target.
    */
   public void reset() {
-    board = new GameBoard<T>();
+    board = new GameBoard<>();
     triesLeft = maxTries;
 
     selectRandomTarget();

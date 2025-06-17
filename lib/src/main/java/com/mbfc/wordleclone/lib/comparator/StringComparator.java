@@ -41,7 +41,7 @@ public class StringComparator implements Comparator<String> {
               "Cannot compare \"%s\" to \"%s\". Strings have different length.", guess, target));
     }
 
-    List<ComparatorResult> result = new ArrayList();
+    List<ComparatorResult> result = new ArrayList<>();
 
     for (int i = 0; i < guess.length(); i++) {
       char guessChar = guess.charAt(i);

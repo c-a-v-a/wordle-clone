@@ -7,7 +7,7 @@ package com.mbfc.wordleclone.cli;
  */
 public class App {
   /** Program entry point. */
-  public static void main(String[] args) {
+  public static void main() {
     GameMenu menu = new GameMenu();
     menu.displayMenu();
   }

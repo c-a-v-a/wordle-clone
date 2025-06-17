@@ -6,8 +6,8 @@ import java.util.List;
 /**
  * Provides generic operations for parsing a file into a list of objects.
  *
- * <p>Implementation of this interface is responsible for parsing both resource files, as well as
- * files on the system.
+ * <p>Implementation of this interface is responsible for parsing both resource files, and files on
+ * the system.
  *
  * @param <T> the type of object to parse each entry into
  */
@@ -20,7 +20,7 @@ public interface Parser<T> {
    * @return a list of parsed objects
    * @throws IOException if an I/O error occurs
    */
-  public abstract List<T> parseResource(String resourcePath) throws IOException;
+  List<T> parseResource(String resourcePath) throws IOException;
 
   /**
    * Parses the given file and returns a list of objects of type {@code T}.
@@ -29,5 +29,5 @@ public interface Parser<T> {
    * @return a list of parsed objects
    * @throws IOException if an I/O error occurs
    */
-  public abstract List<T> parseFile(String filePath) throws IOException;
+  List<T> parseFile(String filePath) throws IOException;
 }

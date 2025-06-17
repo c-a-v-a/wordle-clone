@@ -21,5 +21,5 @@ public interface Comparator<T> {
    * @return a {@code List} of {@link ComparatorResult} representing the result of the comparison
    * @throws CompareException if two objects cannot be compared
    */
-  public abstract List<ComparatorResult> compare(T guess, T target) throws CompareException;
+  List<ComparatorResult> compare(T guess, T target) throws CompareException;
 }

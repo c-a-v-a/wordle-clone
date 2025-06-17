@@ -19,13 +19,13 @@ import java.util.NoSuchElementException;
  * @param <T> the type of each guess
  */
 public class GameBoard<T> implements Iterable<Pair<List<ComparatorResult>, T>> {
-  private List<List<ComparatorResult>> results;
-  private List<T> guesses;
+  private final List<List<ComparatorResult>> results;
+  private final List<T> guesses;
 
   /** Constructs an empty {@code GameBoard}. */
   public GameBoard() {
-    results = new ArrayList();
-    guesses = new ArrayList();
+    results = new ArrayList<>();
+    guesses = new ArrayList<>();
   }
 
   /**
@@ -45,7 +45,7 @@ public class GameBoard<T> implements Iterable<Pair<List<ComparatorResult>, T>> {
    * @return {@code true} if board is empty; @{code false} otherwise
    */
   public boolean isEmpty() {
-    return results.size() < 1 || guesses.size() < 1;
+    return results.isEmpty() || guesses.isEmpty();
   }
 
   /**
@@ -55,7 +55,7 @@ public class GameBoard<T> implements Iterable<Pair<List<ComparatorResult>, T>> {
    * @throws IndexOutOfBoundsException if the board is empty
    */
   public Pair<List<ComparatorResult>, T> getLast() throws IndexOutOfBoundsException {
-    return new Pair(results.get(results.size() - 1), guesses.get(guesses.size() - 1));
+    return new Pair<>(results.get(results.size() - 1), guesses.get(guesses.size() - 1));
   }
 
   /**

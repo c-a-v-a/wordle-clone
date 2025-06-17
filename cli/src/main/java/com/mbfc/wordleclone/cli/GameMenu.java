@@ -4,7 +4,6 @@ import com.mbfc.wordleclone.lib.comparator.ComparatorResult;
 import com.mbfc.wordleclone.lib.comparator.CompareException;
 import com.mbfc.wordleclone.lib.comparator.StringComparator;
 import com.mbfc.wordleclone.lib.game.Game;
-import com.mbfc.wordleclone.lib.game.GameBoard;
 import com.mbfc.wordleclone.lib.game.GameException;
 import com.mbfc.wordleclone.lib.game.SimpleGame;
 import com.mbfc.wordleclone.lib.parser.SimpleStringParser;
@@ -27,10 +26,10 @@ import java.util.Scanner;
  */
 public class GameMenu {
 
-  private Scanner scanner;
+  private final Scanner scanner;
   // Cache of word lists stored as key: list name, value: List<String>
-  private Map<String, List<String>> wordLists;
-  private SimpleStringParser parser;
+  private final Map<String, List<String>> wordLists;
+  private final SimpleStringParser parser;
 
   /** Constructs a new GameMenu instance. */
   public GameMenu() {
@@ -181,7 +180,7 @@ public class GameMenu {
         game.play(guess);
         System.out.println("\nCurrent Board:");
         for (Pair<List<ComparatorResult>, String> entry : game.getBoard()) {
-          System.out.println("Guess: " + entry.getRight() + " | Result: " + entry.getLeft());
+          System.out.println("Guess: " + entry.right() + " | Result: " + entry.left());
         }
         System.out.println("Lives remaining: " + game.getTriesLeft());
       } catch (CompareException | GameException e) {

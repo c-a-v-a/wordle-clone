@@ -14,7 +14,13 @@ import java.util.Random;
  * the guess list is just {@code List<String>}. It follows the standard rules of wordle.
  */
 public class SimpleGame extends Game<String, List<String>> {
-  /** Creates a new game instance, using {@link Game} constructor. */
+  /**
+   * Creates a new game instance, using {@link Game} constructor.
+   *
+   * @param comparator {@code String} comparator that determines correctness of the guess
+   * @param guessList the {@code List<String>} of valid guesses
+   * @param tries the maximum number of guesses that user can make
+   */
   public SimpleGame(Comparator<String> comparator, List<String> guessList, int tries)
       throws NoSuchElementException {
     super(comparator, guessList, tries);
@@ -33,7 +39,7 @@ public class SimpleGame extends Game<String, List<String>> {
   /** {@inheritDoc} */
   @Override
   protected void selectRandomTarget() throws NoSuchElementException {
-    if (guessList.size() < 1) {
+    if (guessList.isEmpty()) {
       throw new NoSuchElementException("Cannot select random element. The list is empty.");
     }
 
