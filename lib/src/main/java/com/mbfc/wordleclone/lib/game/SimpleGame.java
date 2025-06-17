@@ -1,8 +1,6 @@
 package com.mbfc.wordleclone.lib.game;
 
 import com.mbfc.wordleclone.lib.comparator.Comparator;
-import com.mbfc.wordleclone.lib.comparator.ComparatorResult;
-import com.mbfc.wordleclone.lib.comparator.CompareException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
@@ -17,7 +15,7 @@ public class SimpleGame extends Game<String, List<String>> {
   /** Creates a new game instance, using {@link Game} constructor. */
   public SimpleGame(Comparator<String> comparator, List<String> guessList, int tries)
       throws NoSuchElementException {
-    super(comparator, guessList, tries);
+    super(String.class, comparator, guessList, tries);
   }
 
   /** {@inheritDoc} */
@@ -43,16 +41,12 @@ public class SimpleGame extends Game<String, List<String>> {
 
   /** {@inheritDoc} */
   @Override
-  public GameBoard<String> play(String guess) throws CompareException, GameException {
-    validate(guess);
+  protected String convertGuess(String guess) throws GameException {
+    return guess;
+  }
 
-    List<ComparatorResult> result = comparator.compare(guess, target);
-
-    triesLeft--;
-
-    board.add(result, guess);
-    isGameFinished(result);
-
-    return board;
+  @Override
+  public String getTarget() {
+    return target;
   }
 }

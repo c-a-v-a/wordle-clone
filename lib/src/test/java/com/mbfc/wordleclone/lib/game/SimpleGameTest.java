@@ -121,10 +121,11 @@ public class SimpleGameTest {
   @Test
   void play_validGuess_returnsNonEmptyGameBoard() throws CompareException, GameException {
     SimpleGame game = new SimpleGame(comparator, validWordList, lives);
-    GameBoard board = game.play("abc");
+    game.play("abc");
+    GameBoard board = game.getBoard();
     assertNotNull(board);
     assertTrue(!board.isEmpty());
-    assertEquals(lives - 1, game.getTriesLeft());
+    assertEquals(1, game.getTriesUsed());
   }
 
   /** Test that a correct guess results in a win and the game is finished. */
@@ -141,7 +142,7 @@ public class SimpleGameTest {
   void play_runOutOfLives_gameFinishedAndPlayerLost() throws CompareException, GameException {
     SimpleGame game = new SimpleGame(comparator, validWordList, lives);
     game.target = "abc";
-    game.triesLeft = 1;
+    game.triesUsed = lives - 1;
     game.play("def");
     assertTrue(!game.getPlayerWon());
     assertTrue(game.getGameFinished());
@@ -153,11 +154,10 @@ public class SimpleGameTest {
     SimpleGame game = new SimpleGame(comparator, validWordList, lives);
     game.target = "ddd"; // Force a specific target
     game.play("abc");
-    int livesBeforeReset = game.getTriesLeft();
     game.reset();
     assertTrue(game.board.isEmpty());
-    // After reset, triesLeft should equal maxTries
-    assertEquals(game.maxTries, game.getTriesLeft());
+    // After reset, triesUsed should equal 0
+    assertEquals(0, game.getTriesUsed());
     assertTrue(!"ddd".equals(game.target));
   }
 }
