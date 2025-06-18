@@ -19,7 +19,6 @@ public class ZenGame extends Game<String, List<String>> {
    *
    * @param comparator {@code String} comparator that determines correctness of the guess
    * @param guessList the {@code List<String>} of valid guesses
-   * @param tries the maximum number of guesses that user can make
    */
   public ZenGame(Comparator<String> comparator, List<String> guessList)
       throws NoSuchElementException {
