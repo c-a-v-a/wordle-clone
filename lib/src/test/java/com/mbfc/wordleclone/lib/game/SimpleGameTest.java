@@ -132,7 +132,8 @@ public class SimpleGameTest {
     SimpleGame game = new SimpleGame(comparator, validWordList, lives);
 
     // when
-    GameBoard<String> board = game.play("abc");
+    game.play("abc");
+    GameBoard<String> board = game.getBoard();
 
     // then
     assertNotNull(board);
