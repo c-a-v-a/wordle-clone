@@ -132,12 +132,13 @@ public class SimpleGameTest {
     SimpleGame game = new SimpleGame(comparator, validWordList, lives);
 
     // when
-    GameBoard<String> board = game.play("abc");
+    game.play("abc");
+    GameBoard<String> board = game.getBoard();
 
     // then
     assertNotNull(board);
     assertFalse(board.isEmpty());
-    assertEquals(lives - 1, game.getTriesLeft());
+    assertEquals(Integer.toString(lives - 1), game.getTriesLeft());
   }
 
   /** Test that a correct guess results in a win and the game is finished. */

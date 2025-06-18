@@ -4,7 +4,7 @@ import com.mbfc.wordleclone.lib.comparator.CompareException;
 import com.mbfc.wordleclone.lib.comparator.StringComparator;
 import com.mbfc.wordleclone.lib.game.Game;
 import com.mbfc.wordleclone.lib.game.GameException;
-import com.mbfc.wordleclone.lib.game.SimpleGame;
+import com.mbfc.wordleclone.lib.game.ZenGame;
 import com.mbfc.wordleclone.lib.parser.SimpleStringParser;
 import java.io.IOException;
 import java.util.HashMap;
@@ -177,7 +177,8 @@ public class GameMenu {
     Game<String, List<String>> game;
 
     try {
-      game = new SimpleGame(comparator, chosenList, lives);
+      // game = new SimpleGame(comparator, chosenList, lives);
+      game = new ZenGame(comparator, chosenList);
     } catch (NoSuchElementException e) {
       System.out.println("Error: " + e.getMessage());
       return;
@@ -206,7 +207,7 @@ public class GameMenu {
 
     } while (!game.getGameFinished());
 
-    if (game.getTriesLeft() > 0) {
+    if (game.getPlayerWon()) {
       System.out.println("\nCongratulations. You won in " + game.getTriesUsed() + " guesses.");
     } else {
       System.out.println("You lost. The target was: " + game.getTarget());

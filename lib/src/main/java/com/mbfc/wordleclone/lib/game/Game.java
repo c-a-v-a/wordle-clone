@@ -90,8 +90,8 @@ public abstract class Game<T, U> {
     return triesUsed;
   }
 
-  public int getTriesLeft() {
-    return maxTries - triesUsed;
+  public String getTriesLeft() {
+    return Integer.toString(maxTries - triesUsed);
   }
 
   public GameBoard<T> getBoard() {
