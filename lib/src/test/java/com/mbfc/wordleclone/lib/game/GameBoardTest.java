@@ -20,7 +20,7 @@ public class GameBoardTest {
 
   @BeforeEach
   void setUp() {
-    board = new GameBoard<>();
+    board = new GameBoard<>(String.class);
   }
 
   /** Test if new board is empty. */
