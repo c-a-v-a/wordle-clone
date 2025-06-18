@@ -1,7 +1,7 @@
 package com.mbfc.wordleclone.lib.comparator;
 
 /**
- * Represents the possible values of a comparison operation in {@link Comparator} inteface.
+ * Represents the possible values of a comparison operation in {@link Comparator} interface.
  *
  * <p>Each value is associated with a description that provides explanation for the meaning of the
  * result, so that user will know what each result means.
@@ -23,7 +23,7 @@ public enum ComparatorResult {
 
   private final String text;
 
-  private ComparatorResult(String s) {
+  ComparatorResult(String s) {
     text = s;
   }
 

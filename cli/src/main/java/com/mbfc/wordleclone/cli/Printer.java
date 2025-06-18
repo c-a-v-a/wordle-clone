@@ -19,14 +19,14 @@ public class Printer {
 
   /** Prints out the visual legend explaining what each color means in the context of the game. */
   public static void printColorCodeInfo() {
-    String render = "";
+    StringBuilder render = new StringBuilder();
 
     for (ComparatorResult result : ComparatorResult.values()) {
-      render += renderSingle(result, result.getText());
+      render.append(renderSingle(result, result.getText()));
     }
 
     System.out.println("COLOR CODE INFO:");
-    System.out.println(Ansi.ansi().render(render));
+    System.out.println(Ansi.ansi().render(render.toString()));
   }
 
   private static String renderSingle(ComparatorResult result, String string) {
@@ -41,17 +41,17 @@ public class Printer {
   }
 
   private static String renderString(List<ComparatorResult> results, String string) {
-    String render = "";
+    StringBuilder render = new StringBuilder();
 
     for (int i = 0; i < string.length(); i++) {
-      render += renderSingle(results.get(i), string.toUpperCase().substring(i, i + 1));
+      render.append(renderSingle(results.get(i), string.toUpperCase().substring(i, i + 1)));
     }
 
-    return render;
+    return render.toString();
   }
 
   private static void println(Pair<List<ComparatorResult>, String> pair) {
-    AnsiConsole.out().println(Ansi.ansi().render(renderString(pair.getLeft(), pair.getRight())));
+    AnsiConsole.out().println(Ansi.ansi().render(renderString(pair.left(), pair.right())));
   }
 
   /**

@@ -12,7 +12,7 @@ import java.util.NoSuchElementException;
  * <p>This clas provides the structure and api, for every possible game type.
  *
  * @param <T> the type of values used in game
- * @param <U> the type of guess list, should generaly be a collection of {@code T} type elements
+ * @param <U> the type of guess list, should generally be a collection of {@code T} type elements
  */
 public abstract class Game<T, U> {
 
@@ -101,7 +101,7 @@ public abstract class Game<T, U> {
   public abstract String getTarget();
 
   /**
-   * Validates wether a given guess is acceptable according to rules.
+   * Validates whether a given guess is acceptable according to rules.
    *
    * @param guess the guess to validate
    * @throws GameException if the guess is not valid
@@ -152,6 +152,8 @@ public abstract class Game<T, U> {
    *
    * <p>This function just sets the according flags, {@link Game#playerWon} and {@link
    * Game#gameFinished}.
+   *
+   * @param result results of the last user's guess
    */
   public void isGameFinished(List<ComparatorResult> result) {
     playerWon = result.stream().allMatch(x -> x.equals(ComparatorResult.CORRECT));

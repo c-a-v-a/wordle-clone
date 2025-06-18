@@ -1,13 +1,13 @@
 package com.mbfc.wordleclone.lib.game;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.mbfc.wordleclone.lib.comparator.ComparatorResult;
 import com.mbfc.wordleclone.lib.util.Pair;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -39,13 +39,13 @@ public class GameBoardTest {
   @Test
   void isEmpty_afterAdd_false() {
     // given
-    board.add(new ArrayList<>(Arrays.asList(ComparatorResult.CORRECT)), "s");
+    board.add(new ArrayList<>(List.of(ComparatorResult.CORRECT)), "s");
 
     // when
     boolean isEmpty = board.isEmpty();
 
     // then
-    assertTrue(!isEmpty);
+    assertFalse(isEmpty);
   }
 
   /** Test that getting last element from empty board throws exception. */
@@ -54,12 +54,7 @@ public class GameBoardTest {
     // given
 
     // when
-    Exception exception =
-        assertThrows(
-            IndexOutOfBoundsException.class,
-            () -> {
-              board.getLast();
-            });
+    assertThrows(IndexOutOfBoundsException.class, () -> board.getLast());
 
     // then
   }
@@ -68,15 +63,15 @@ public class GameBoardTest {
   @Test
   void getLast_afterAdd_addedElement() throws IndexOutOfBoundsException {
     // given
-    board.add(new ArrayList<>(Arrays.asList(ComparatorResult.CORRECT)), "s");
+    board.add(new ArrayList<>(List.of(ComparatorResult.CORRECT)), "s");
 
     // when
     var pair = board.getLast();
 
     // then
-    assertEquals(1, pair.getLeft().size());
-    assertEquals(ComparatorResult.CORRECT, pair.getLeft().get(0));
-    assertEquals("s", pair.getRight());
+    assertEquals(1, pair.left().size());
+    assertEquals(ComparatorResult.CORRECT, pair.left().get(0));
+    assertEquals("s", pair.right());
   }
 
   /** Test that iterator doesn't have next on empty board. */
@@ -88,21 +83,21 @@ public class GameBoardTest {
     Iterator<Pair<List<ComparatorResult>, String>> it = board.iterator();
 
     // then
-    assertTrue(!it.hasNext());
+    assertFalse(it.hasNext());
   }
 
   /** Test that iterator has next element after add. */
   @Test
   void iterator_gameBoardWithElements_hasNext() {
     // given
-    board.add(new ArrayList<>(Arrays.asList(ComparatorResult.CORRECT)), "s");
+    board.add(new ArrayList<>(List.of(ComparatorResult.CORRECT)), "s");
     // when
     Iterator<Pair<List<ComparatorResult>, String>> it = board.iterator();
 
     // then
     assertTrue(it.hasNext());
-    assertEquals("s", it.next().getRight());
-    assertTrue(!it.hasNext());
+    assertEquals("s", it.next().right());
+    assertFalse(it.hasNext());
   }
 
   /** Test that iterator throws exception if next is called and there are no elements left. */
@@ -114,6 +109,6 @@ public class GameBoardTest {
     Iterator<Pair<List<ComparatorResult>, String>> it = board.iterator();
 
     // then
-    Exception exception = assertThrows(NoSuchElementException.class, it::next);
+    assertThrows(NoSuchElementException.class, it::next);
   }
 }

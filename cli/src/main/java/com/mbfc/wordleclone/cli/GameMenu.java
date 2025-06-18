@@ -25,10 +25,10 @@ import org.fusesource.jansi.Ansi;
  */
 public class GameMenu {
 
-  private Scanner scanner;
+  private final Scanner scanner;
   // Cache of word lists stored as key: list name, value: List<String>
-  private Map<String, List<String>> wordLists;
-  private SimpleStringParser parser;
+  private final Map<String, List<String>> wordLists;
+  private final SimpleStringParser parser;
 
   /** Constructs a new GameMenu instance. */
   public GameMenu() {

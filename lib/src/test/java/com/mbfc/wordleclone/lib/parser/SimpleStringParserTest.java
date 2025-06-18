@@ -21,33 +21,28 @@ public class SimpleStringParserTest {
   }
 
   /**
-   * Test that {@link SimpleStringParser#parseResource(string)} throws an exception, when it doesn't
+   * Test that {@link SimpleStringParser#parseResource(String)} throws an exception, when it doesn't
    * find the resource file.
    */
   @Test
-  void parseResource_missingResource_throwsException() throws IOException {
+  void parseResource_missingResource_throwsException() {
     // given
     String resourcePath = "non_existing_resource.txt";
     String expectedMessage = "Resource not found: non_existing_resource.txt";
 
     // when
-    Exception exception =
-        assertThrows(
-            IOException.class,
-            () -> {
-              parser.parseResource(resourcePath);
-            });
+    Exception exception = assertThrows(IOException.class, () -> parser.parseResource(resourcePath));
 
     // then
     assertEquals(expectedMessage, exception.getMessage());
   }
 
   /**
-   * Test that {@link SimpleStringParser#parseResource(string)} correctly parses empty resource
+   * Test that {@link SimpleStringParser#parseResource(String)} correctly parses empty resource
    * file.
    */
   @Test
-  void praseResource_emptyFile_returnsEmptyList() throws IOException {
+  void parseResource_emptyFile_returnsEmptyList() throws IOException {
     // given
     String resourcePath = "empty_resource.txt";
 
@@ -60,7 +55,7 @@ public class SimpleStringParserTest {
   }
 
   /**
-   * Test that {@link SimpleStringParser#parseResource(string)} correctly parses the resource file.
+   * Test that {@link SimpleStringParser#parseResource(String)} correctly parses the resource file.
    */
   @Test
   void parseResource_fileExists_returnsExpectedList() throws IOException {
@@ -80,18 +75,13 @@ public class SimpleStringParserTest {
 
   /** Test that parsing nonexistent files throws and exception. */
   @Test
-  void parseFile_nonexistentFile_throwsException() throws IOException {
+  void parseFile_nonexistentFile_throwsException() {
     // given
     String filePath = "non_existing_file.txt";
     String expectedMessage = "File not found: non_existing_file.txt";
 
     // when
-    Exception exception =
-        assertThrows(
-            IOException.class,
-            () -> {
-              parser.parseFile(filePath);
-            });
+    Exception exception = assertThrows(IOException.class, () -> parser.parseFile(filePath));
 
     // then
     assertEquals(expectedMessage, exception.getMessage());
