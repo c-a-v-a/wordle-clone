@@ -19,13 +19,26 @@ import java.util.NoSuchElementException;
  * @param <T> the type of each guess
  */
 public class GameBoard<T> implements Iterable<Pair<List<ComparatorResult>, T>> {
-  private final List<List<ComparatorResult>> results;
-  private final List<T> guesses;
+  private List<List<ComparatorResult>> results;
+  private List<T> guesses;
+  private final Class<T> type;
 
-  /** Constructs an empty {@code GameBoard}. */
-  public GameBoard() {
-    results = new ArrayList<>();
-    guesses = new ArrayList<>();
+  /**
+   * Constructs an empty {@code GameBoard}.
+   *
+   * <p>Type of the game board must be passed as a parameter to allow for generic printing in the
+   * cli, due to the java's type erasure.
+   *
+   * @param type type of the game board
+   */
+  public GameBoard(Class<T> type) {
+    results = new ArrayList();
+    guesses = new ArrayList();
+    this.type = type;
+  }
+
+  public Class<T> getType() {
+    return type;
   }
 
   /**

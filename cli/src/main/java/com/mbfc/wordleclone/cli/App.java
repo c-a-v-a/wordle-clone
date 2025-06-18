@@ -1,5 +1,7 @@
 package com.mbfc.wordleclone.cli;
 
+import org.fusesource.jansi.AnsiConsole;
+
 /**
  * Main application entry point.
  *
@@ -7,8 +9,12 @@ package com.mbfc.wordleclone.cli;
  */
 public class App {
   /** Program entry point. */
-  public static void main() {
+  public static void main(String[] args) {
+    AnsiConsole.systemInstall();
+
     GameMenu menu = new GameMenu();
     menu.displayMenu();
+
+    AnsiConsole.systemUninstall();
   }
 }

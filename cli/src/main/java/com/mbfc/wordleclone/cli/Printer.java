@@ -61,9 +61,11 @@ public class Printer {
    *
    * @param board the game board for current game
    */
-  public static void printBoard(GameBoard<String> board) {
-    for (Pair<List<ComparatorResult>, String> pair : board) {
-      println(pair);
+  public static <T> void printBoard(GameBoard<T> board) {
+    if (board.getType() == String.class) {
+      for (Pair<List<ComparatorResult>, String> pair : (GameBoard<String>) board) {
+        println(pair);
+      }
     }
   }
 }

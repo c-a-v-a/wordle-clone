@@ -26,6 +26,8 @@ public abstract class Game<T, U> {
   /** List of valid guesses. */
   protected final U guessList;
 
+  private final Class<T> type;
+
   /**
    * The value that needs to be guessed.
    *
@@ -45,8 +47,8 @@ public abstract class Game<T, U> {
   /** Maximum number of tries that user has to guess the value. */
   protected final int maxTries;
 
-  /** Number of tries that user has left. */
-  protected int triesLeft;
+  /** Number of tries that user has used. */
+  protected int triesUsed;
 
   /** Flag that tells if game is finished. */
   protected boolean gameFinished;
@@ -57,18 +59,21 @@ public abstract class Game<T, U> {
   /**
    * Constructs a new game instance.
    *
+   * @param type the type of the game board, needs to be there due to the type erasure
    * @param comparator the comparator that determines correctness of the guess
    * @param guessList the list of valid guesses
    * @param tries the maximum number of guesses that user can make
    */
-  public Game(Comparator<T> comparator, U guessList, int tries) throws NoSuchElementException {
+  public Game(Class<T> type, Comparator<T> comparator, U guessList, int tries)
+      throws NoSuchElementException {
     this.comparator = comparator;
     this.guessList = guessList;
-    this.board = new GameBoard<>();
+    this.board = new GameBoard<T>(type);
     this.maxTries = tries;
-    this.triesLeft = tries;
+    this.triesUsed = 0;
     this.gameFinished = false;
     this.playerWon = false;
+    this.type = type;
 
     selectRandomTarget();
   }
@@ -81,17 +86,19 @@ public abstract class Game<T, U> {
     return playerWon;
   }
 
+  public int getTriesUsed() {
+    return triesUsed;
+  }
+
   public int getTriesLeft() {
-    return triesLeft;
+    return maxTries - triesUsed;
   }
 
   public GameBoard<T> getBoard() {
     return board;
   }
 
-  public T getTarget() {
-    return target;
-  }
+  public abstract String getTarget();
 
   /**
    * Validates whether a given guess is acceptable according to rules.
@@ -112,14 +119,33 @@ public abstract class Game<T, U> {
   protected abstract void selectRandomTarget() throws NoSuchElementException;
 
   /**
+   * Converts the player's {@code String} guess into a valid guess of type {@code T}.
+   *
+   * @param guess the player's guess
+   * @return the converted guess of a valid type
+   * @throws GameException if the guess cannot be converted
+   */
+  protected abstract T convertGuess(String guess) throws GameException;
+
+  /**
    * Processes a guess and updates the game board accordingly.
    *
    * @param guess the player's guess
-   * @return the updated game board
    * @throws CompareException if an error occurs during comparison
    * @throws GameException if the guess is not valid
    */
-  public abstract GameBoard<T> play(T guess) throws CompareException, GameException;
+  public void play(String guess) throws CompareException, GameException {
+    T convertedGuess = convertGuess(guess);
+
+    validate(convertedGuess);
+
+    List<ComparatorResult> result = comparator.compare(convertedGuess, target);
+
+    triesUsed++;
+
+    board.add(result, convertedGuess);
+    isGameFinished(result);
+  }
 
   /**
    * Checks if the game is finished and if player has won.
@@ -131,7 +157,7 @@ public abstract class Game<T, U> {
    */
   public void isGameFinished(List<ComparatorResult> result) {
     playerWon = result.stream().allMatch(x -> x.equals(ComparatorResult.CORRECT));
-    gameFinished = triesLeft <= 0 || playerWon;
+    gameFinished = triesUsed >= maxTries || playerWon;
   }
 
   /**
@@ -140,8 +166,8 @@ public abstract class Game<T, U> {
    * <p>Clears the board, resets the number of attempts and selects new target.
    */
   public void reset() {
-    board = new GameBoard<>();
-    triesLeft = maxTries;
+    board = new GameBoard<>(type);
+    triesUsed = 0;
 
     selectRandomTarget();
   }

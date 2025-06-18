@@ -1,19 +1,18 @@
 package com.mbfc.wordleclone.cli;
 
-import com.mbfc.wordleclone.lib.comparator.ComparatorResult;
 import com.mbfc.wordleclone.lib.comparator.CompareException;
 import com.mbfc.wordleclone.lib.comparator.StringComparator;
 import com.mbfc.wordleclone.lib.game.Game;
 import com.mbfc.wordleclone.lib.game.GameException;
 import com.mbfc.wordleclone.lib.game.SimpleGame;
 import com.mbfc.wordleclone.lib.parser.SimpleStringParser;
-import com.mbfc.wordleclone.lib.util.Pair;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import org.fusesource.jansi.Ansi;
 
 /**
  * Interactive game menu.
@@ -36,11 +35,22 @@ public class GameMenu {
     scanner = new Scanner(System.in);
     wordLists = new HashMap<>();
     parser = new SimpleStringParser();
+
+    resourceLoader();
+  }
+
+  private void resourceLoader() {
+    try {
+      wordLists.put("5 letters", parser.parseResource("5letters.txt"));
+    } catch (Exception ignore) {
+      return;
+    }
   }
 
   /** Displays the main menu and processes user commands until Exit is selected. */
   public void displayMenu() {
     while (true) {
+      System.out.println(Ansi.ansi().eraseScreen().cursor(0, 0));
       System.out.println("\n==== Main Menu ====");
       System.out.println("1. Play");
       System.out.println("2. Load a list");
@@ -67,6 +77,7 @@ public class GameMenu {
 
   /** Handles the "Load a list" option: prompts for file path and list name then loads the list. */
   private void loadListOption() {
+    Ansi.ansi().eraseScreen().cursor(0, 0);
     System.out.print("Enter the file path to the word list (.txt): ");
     String filePath = scanner.nextLine().trim();
 
@@ -94,6 +105,7 @@ public class GameMenu {
    * <p>Provides a choice between String and Object (with only String implemented).
    */
   private void playOption() {
+    System.out.println(Ansi.ansi().eraseScreen().cursor(0, 0));
     System.out.println("\nSelect data type to play with:");
     System.out.println("1. String");
     System.out.println("2. Object (not implemented)");
@@ -119,6 +131,7 @@ public class GameMenu {
    * for the number of lives and word list selection.
    */
   private void playStringMode() {
+    System.out.println(Ansi.ansi().eraseScreen().cursor(0, 0));
     System.out.println("\nSelect game mode:");
     System.out.println("1. Endless (not implemented)");
     System.out.println("2. Normal");
@@ -170,28 +183,41 @@ public class GameMenu {
       return;
     }
 
-    System.out.println("\nGame started in Normal mode with " + lives + " lives. Begin guessing:");
+    gameLoop(game);
+  }
 
-    // Main game loop: user enters a guess (always a String)
-    while (!game.getGameFinished()) {
-      System.out.print("Enter your guess: ");
+  private void gameLoop(Game<?, ?> game) {
+    do {
+      System.out.println(Ansi.ansi().eraseScreen().cursor(0, 0));
+      System.out.println("Guesses left: " + game.getTriesLeft());
+      Printer.printBoard(game.getBoard());
+      System.out.print("\nGuess: ");
+
       String guess = scanner.nextLine().trim();
+
       try {
         game.play(guess);
-        System.out.println("\nCurrent Board:");
-        for (Pair<List<ComparatorResult>, String> entry : game.getBoard()) {
-          System.out.println("Guess: " + entry.right() + " | Result: " + entry.left());
-        }
-        System.out.println("Lives remaining: " + game.getTriesLeft());
       } catch (CompareException | GameException e) {
         System.out.println("Error: " + e.getMessage());
+        scanner.nextLine();
+
+        continue;
       }
+
+    } while (!game.getGameFinished());
+
+    if (game.getTriesLeft() > 0) {
+      System.out.println("\nCongratulations. You won in " + game.getTriesUsed() + " guesses.");
+    } else {
+      System.out.println("You lost. The target was: " + game.getTarget());
     }
 
-    if (game.getPlayerWon()) {
-      System.out.println("Congratulations! You won.");
-    } else {
-      System.out.println("You lost. The correct word was: " + game.getTarget());
+    System.out.println("\nDo you want to play again? [y/n]");
+    String option = scanner.nextLine().trim();
+
+    if (option.equals("y") || option.equals("Y")) {
+      game.reset();
+      gameLoop(game);
     }
   }
 }

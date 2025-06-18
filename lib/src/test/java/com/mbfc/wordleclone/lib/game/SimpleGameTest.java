@@ -160,9 +160,9 @@ public class SimpleGameTest {
     // given
     SimpleGame game = new SimpleGame(comparator, validWordList, lives);
     game.target = "abc";
-    game.triesLeft = 1;
 
     // when
+    game.triesUsed = lives - 1;
     game.play("def");
 
     // then
@@ -183,7 +183,9 @@ public class SimpleGameTest {
 
     // then
     assertTrue(game.board.isEmpty());
-    assertEquals(game.maxTries, game.getTriesLeft());
+
+    // After reset, triesUsed should equal 0
+    assertEquals(0, game.getTriesUsed());
     assertNotEquals("ddd", game.target);
   }
 }
