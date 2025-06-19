@@ -51,6 +51,16 @@ public class SimpleGame extends Game<String, List<String>> {
     return guess;
   }
 
+  /** {@inheritDoc} */
+  @Override
+  public String getFinalGameMessage() {
+    if (getPlayerWon()) {
+      return "\nCongratulations. You won in " + getTriesUsed() + " guesses.";
+    } else {
+      return "\nYou lost. The target was: " + getTarget();
+    }
+  }
+
   @Override
   public String getTarget() {
     return target;
