@@ -13,7 +13,7 @@ import java.util.Random;
  * the guess list is just {@code List<String>}. Player can guess the word until he guesses it, ergo
  * there are no limited tries.
  */
-public class ZenGame extends Game<String, List<String>> {
+public class ZenGame extends SimpleGame {
   /**
    * Creates a new game instance, using {@link Game} constructor.
    *
@@ -22,39 +22,7 @@ public class ZenGame extends Game<String, List<String>> {
    */
   public ZenGame(Comparator<String> comparator, List<String> guessList)
       throws NoSuchElementException {
-    super(String.class, comparator, guessList, 0);
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  protected void validate(String guess) throws GameException {
-    if (target.length() != guess.length()) {
-      throw new GameException("Invalid guess. The length of guess and target does not match.");
-    } else if (!guessList.contains(guess)) {
-      throw new GameException("Invalid guess. The guess is not in the word list.");
-    }
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  protected void selectRandomTarget() throws NoSuchElementException {
-    if (guessList.isEmpty()) {
-      throw new NoSuchElementException("Cannot select random element. The list is empty.");
-    }
-
-    Random rand = new Random();
-    target = guessList.get(rand.nextInt(guessList.size()));
-  }
-
-  /** {@inheritDoc} */
-  @Override
-  protected String convertGuess(String guess) throws GameException {
-    return guess;
-  }
-
-  @Override
-  public String getTarget() {
-    return target;
+    super(comparator, guessList, 0);
   }
 
   @Override
