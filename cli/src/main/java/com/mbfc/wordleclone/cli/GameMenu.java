@@ -2,10 +2,13 @@ package com.mbfc.wordleclone.cli;
 
 import com.mbfc.wordleclone.lib.comparator.CompareException;
 import com.mbfc.wordleclone.lib.comparator.StringComparator;
+import com.mbfc.wordleclone.lib.game.EndlessGame;
 import com.mbfc.wordleclone.lib.game.Game;
 import com.mbfc.wordleclone.lib.game.GameException;
+import com.mbfc.wordleclone.lib.game.SimpleGame;
 import com.mbfc.wordleclone.lib.game.ZenRandomGame;
 import com.mbfc.wordleclone.lib.parser.SimpleStringParser;
+import com.mbfc.wordleclone.lib.util.HighScoreManager;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -129,21 +132,17 @@ public class GameMenu {
   /**
    * Handles the "Play" option for String-based games.
    *
-   * <p>Provides a choice between Endless (not implemented) and Normal modes. In Normal mode, asks
-   * for the number of lives and word list selection.
+   * <p>Provides a choice between Endless and Normal modes. In Normal mode, asks for the number of
+   * lives and word list selection.
    */
   private void playStringMode() {
     System.out.println(Ansi.ansi().eraseScreen().cursor(0, 0));
     System.out.println("\nSelect game mode:");
-    System.out.println("1. Endless (not implemented)");
+    System.out.println("1. Endless");
     System.out.println("2. Normal");
+    System.out.println("3. Zen Random");
     System.out.print("Choose an option: ");
     String modeOption = scanner.nextLine().trim();
-
-    if (!"2".equals(modeOption)) {
-      System.out.println("Only Normal mode is implemented.");
-      return;
-    }
 
     System.out.print("Enter the number of attempts (default 6): ");
     int lives;
@@ -151,7 +150,7 @@ public class GameMenu {
     try {
       lives = Integer.parseInt(scanner.nextLine().trim());
     } catch (NumberFormatException e) {
-      // System.out.println("Invalid number format. Using default lives = 6.");
+      System.out.println("Invalid number format. Using default lives = 6.");
       lives = 6;
     }
 
@@ -175,28 +174,67 @@ public class GameMenu {
       return;
     }
 
-    StringComparator comparator = new StringComparator();
-    Game<String, List<String>> game;
+    if ("1".equals(modeOption)) {
 
-    try {
-      // game = new SimpleGame(comparator, chosenList, lives);
-      game = new ZenRandomGame(comparator, 5);
-    } catch (NoSuchElementException e) {
-      System.out.println("Error: " + e.getMessage());
-      return;
+      StringComparator comparator = new StringComparator();
+      Game<String, List<String>> game;
+      try {
+        game = new EndlessGame(comparator, chosenList, lives);
+      } catch (NoSuchElementException e) {
+        System.out.println("Error: " + e.getMessage());
+        return;
+      }
+      HighScoreManager highScoreManager =
+          new HighScoreManager("cli/src/main/resources/highscore_endless_classic.txt");
+      endlessGameLoop(game, highScoreManager);
+
+    } else if ("2".equals(modeOption)) {
+
+      StringComparator comparator = new StringComparator();
+      Game<String, List<String>> game;
+      try {
+        game = new SimpleGame(comparator, chosenList, lives);
+      } catch (NoSuchElementException e) {
+        System.out.println("Error: " + e.getMessage());
+        return;
+      }
+
+      gameLoop(game);
+    } else if ("3".equals(modeOption)) {
+
+      StringComparator comparator = new StringComparator();
+      Game<String, List<String>> game;
+      try {
+        game = new ZenRandomGame(comparator, 5);
+      } catch (NoSuchElementException e) {
+        System.out.println("Error: " + e.getMessage());
+        return;
+      }
+
+      gameLoop(game);
+    } else {
+      System.out.println("Invalid option.");
     }
-
-    gameLoop(game);
   }
 
+  /**
+   * Handles the game loop for the Normal game mode.
+   *
+   * <p>Displays the current board and number of guesses left, processes user input (with an option
+   * to exit by typing "q"), and determines whether the game is won or lost. After the game ends, it
+   * asks the user if they want to play again and restarts the game loop if confirmed.
+   */
   private void gameLoop(Game<?, ?> game) {
     do {
       System.out.println(Ansi.ansi().eraseScreen().cursor(0, 0));
       System.out.println("Guesses left: " + game.getTriesLeft());
       Printer.printBoard(game.getBoard());
-      System.out.print("\nGuess: ");
+      System.out.print("\nGuess (or type 'q' to exit): ");
 
       String guess = scanner.nextLine().trim().toLowerCase();
+      if (guess.equalsIgnoreCase("q")) {
+        break;
+      }
 
       try {
         game.play(guess);
@@ -225,5 +263,39 @@ public class GameMenu {
       game.reset();
       gameLoop(game);
     }
+  }
+
+  /**
+   * Handles the game loop for the Endless mode.
+   *
+   * <p>Displays the current score, high score, and the number of attempts remaining for the current
+   * word. Processes user input (with an option to exit by typing "q"), updates the high score when
+   * necessary, and continuously loops until the user decides to exit endless mode.
+   */
+  private void endlessGameLoop(Game<?, ?> game, HighScoreManager highScoreManager) {
+    while (true) {
+      System.out.println(Ansi.ansi().eraseScreen().cursor(0, 0));
+      EndlessGame endlessGame = (EndlessGame) game;
+      System.out.println("Current Score: " + endlessGame.getScore());
+      System.out.println("High Score: " + highScoreManager.getHighScore());
+      System.out.println("Attempts left for this word: " + endlessGame.getTriesLeftInRound());
+      Printer.printBoard(game.getBoard());
+      System.out.print("\nGuess (or type 'q' to exit): ");
+
+      String guess = scanner.nextLine().trim().toLowerCase();
+      if (guess.equalsIgnoreCase("q")) {
+        break;
+      }
+
+      try {
+        game.play(guess);
+        highScoreManager.updateHighScore(endlessGame.getScore());
+      } catch (CompareException | GameException e) {
+        System.out.println("Error: " + e.getMessage());
+        scanner.nextLine();
+      }
+    }
+    System.out.println("Exiting endless mode. Final score: " + ((EndlessGame) game).getScore());
+    System.out.println("High Score: " + highScoreManager.getHighScore());
   }
 }
