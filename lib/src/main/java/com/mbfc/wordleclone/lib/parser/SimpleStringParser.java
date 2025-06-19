@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  *
  * @see Parser
  */
-public class SimpleStringParser implements Parser<String> {
+public class SimpleStringParser implements Parser<List<String>> {
 
   /**
    * {@inheritDoc}
