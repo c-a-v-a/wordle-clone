@@ -41,7 +41,9 @@ public class GameMenu {
 
   private void resourceLoader() {
     try {
+      wordLists.put("4 letters", parser.parseResource("4letters.txt"));
       wordLists.put("5 letters", parser.parseResource("5letters.txt"));
+      wordLists.put("6 letters", parser.parseResource("6letters.txt"));
     } catch (Exception ignore) {
       return;
     }
