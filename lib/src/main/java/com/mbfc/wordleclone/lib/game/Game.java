@@ -132,6 +132,13 @@ public abstract class Game<T, U> {
   protected abstract T convertGuess(String guess) throws GameException;
 
   /**
+   * Returns a summary message of the game's result after it has finished.
+   *
+   * @return A string containing the final message (win/loss).
+   */
+  public abstract String getFinalGameMessage();
+
+  /**
    * Processes a guess and updates the game board accordingly.
    *
    * @param guess the player's guess

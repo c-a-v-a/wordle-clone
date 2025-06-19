@@ -6,61 +6,67 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
-/** HighScoreManager handles loading and saving the high score to a file. */
+/**
+ * Utility class for managing the high score.
+ *
+ * <p>This class reads and writes the high score to a file. By default, if a relative file name is
+ * provided, it is stored inside the project's folder at "cli/src/main/resources". However, if an
+ * absolute path is provided (e.g., during tests), it will be used directly.
+ */
 public class HighScoreManager {
   private final Path filePath;
   private int highScore;
 
   /**
-   * [Constructor Heading] Initializes a new HighScoreManager and loads the stored high score.
+   * Creates a new instance of HighScoreManager and loads the high score.
    *
-   * <p>given a filename, when the manager is constructed, then highScore is set to 0 and
-   * loadHighScore() is called.
-   *
-   * @param filename the name of the file storing the high score.
+   * @param configName the name of the configuration file (e.g., "highscore_endless_classic.txt" or
+   *     an absolute path)
    */
-  public HighScoreManager(String filename) {
-    filePath = Paths.get(filename);
-    highScore = 0;
+  public HighScoreManager(String configName) {
+    Path givenPath = Paths.get(configName);
+    if (givenPath.isAbsolute()) {
+      this.filePath = givenPath;
+    } else {
+      this.filePath = Paths.get("cli", "src", "main", "resources", configName);
+    }
+    this.highScore = 0;
+
+    try {
+      Files.createDirectories(filePath.getParent());
+    } catch (IOException ignore) {
+    }
+
     loadHighScore();
   }
 
   /**
-   * [loadHighScore Heading] Loads the high score from the file if it exists.
+   * Elegantly loads the high score from the configuration file.
    *
-   * <p>given a valid file path, when loadHighScore() is invoked, then the high score is parsed from
-   * the file, or set to 0 on error.
+   * <p>If reading or parsing fails, the high score will remain at the default value (0).
    */
   private void loadHighScore() {
-    if (Files.exists(filePath)) {
-      try {
-        String content = new String(Files.readAllBytes(filePath));
-        highScore = Integer.parseInt(content.trim());
-      } catch (Exception e) {
-        System.out.println("Failed to load high score. Defaulting to 0.");
-        highScore = 0;
-      }
+    try {
+      String content = new String(Files.readAllBytes(filePath));
+      highScore = Integer.parseInt(content.trim());
+    } catch (Exception ignore) {
+      highScore = 0;
     }
   }
 
   /**
-   * [getHighScore Heading] Returns the current high score.
+   * Returns the current high score.
    *
-   * <p>given the current state, when getHighScore() is called, then it returns the highScore value.
-   *
-   * @return the current high score.
+   * @return the high score
    */
   public int getHighScore() {
     return highScore;
   }
 
   /**
-   * [updateHighScore Heading] Updates and saves the high score if the current score is higher.
+   * Updates the high score if the current score is greater than the stored high score.
    *
-   * <p>given a current score, when updateHighScore(currentScore) is invoked, then if currentScore
-   * exceeds highScore, highScore is updated and saved.
-   *
-   * @param currentScore the new score to compare with the stored high score.
+   * @param currentScore the current score to compare with the high score
    */
   public void updateHighScore(int currentScore) {
     if (currentScore > highScore) {
@@ -70,20 +76,21 @@ public class HighScoreManager {
   }
 
   /**
-   * [saveHighScore Heading] Saves the current high score to the file.
+   * Saves the high score to the configuration file.
    *
-   * <p>given an updated high score, when saveHighScore() is called, then the high score is written
-   * to the file.
+   * <p>If an error occurs during saving, the error will be printed to the error stream, indicating
+   * potential data loss.
    */
   private void saveHighScore() {
     try {
+      String scoreStr = String.valueOf(highScore);
       Files.write(
           filePath,
-          String.valueOf(highScore).getBytes(),
+          scoreStr.getBytes(),
           StandardOpenOption.CREATE,
           StandardOpenOption.TRUNCATE_EXISTING);
     } catch (IOException e) {
-      System.out.println("Error saving high score: " + e.getMessage());
+      System.err.println("Error saving high score: " + e.getMessage());
     }
   }
 }
