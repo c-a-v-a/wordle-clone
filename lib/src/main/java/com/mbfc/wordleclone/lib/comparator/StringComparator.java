@@ -1,7 +1,9 @@
 package com.mbfc.wordleclone.lib.comparator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * An implementation fo {@link Comparator} interface for comparing two strings character by
@@ -41,18 +43,36 @@ public class StringComparator implements Comparator<String> {
               "Cannot compare \"%s\" to \"%s\". Strings have different length.", guess, target));
     }
 
-    List<ComparatorResult> result = new ArrayList<>();
+    int length = guess.length();
+    List<ComparatorResult> result = new ArrayList<>(length);
 
-    for (int i = 0; i < guess.length(); i++) {
+    for (int i = 0; i < length; i++) {
+      result.add(null);
+    }
+
+    Map<Character, Integer> remainingLetters = new HashMap<>();
+
+    for (int i = 0; i < length; i++) {
       char guessChar = guess.charAt(i);
       char targetChar = target.charAt(i);
-
       if (guessChar == targetChar) {
-        result.add(ComparatorResult.CORRECT);
-      } else if (target.indexOf(guessChar) != -1) {
-        result.add(ComparatorResult.PARTIAL);
+        result.set(i, ComparatorResult.CORRECT);
       } else {
-        result.add(ComparatorResult.INCORRECT);
+        result.set(i, null); // placeholder
+        remainingLetters.put(targetChar, remainingLetters.getOrDefault(targetChar, 0) + 1);
+      }
+    }
+
+    for (int i = 0; i < length; i++) {
+      if (result.get(i) == null) {
+        char guessChar = guess.charAt(i);
+        int count = remainingLetters.getOrDefault(guessChar, 0);
+        if (count > 0) {
+          result.set(i, ComparatorResult.PARTIAL);
+          remainingLetters.put(guessChar, count - 1);
+        } else {
+          result.set(i, ComparatorResult.INCORRECT);
+        }
       }
     }
 

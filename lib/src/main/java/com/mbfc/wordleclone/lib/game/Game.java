@@ -86,6 +86,10 @@ public abstract class Game<T, U> {
     return playerWon;
   }
 
+  public int getMaxTries() {
+    return maxTries;
+  }
+
   public int getTriesUsed() {
     return triesUsed;
   }
@@ -167,7 +171,10 @@ public abstract class Game<T, U> {
    */
   public void reset() {
     board = new GameBoard<>(type);
+
     triesUsed = 0;
+    this.gameFinished = false;
+    this.playerWon = false;
 
     selectRandomTarget();
   }

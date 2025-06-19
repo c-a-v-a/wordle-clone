@@ -196,7 +196,7 @@ public class GameMenu {
       Printer.printBoard(game.getBoard());
       System.out.print("\nGuess: ");
 
-      String guess = scanner.nextLine().trim();
+      String guess = scanner.nextLine().trim().toLowerCase();
 
       try {
         game.play(guess);
@@ -208,6 +208,9 @@ public class GameMenu {
       }
 
     } while (!game.getGameFinished());
+    System.out.println(Ansi.ansi().eraseScreen().cursor(0, 0));
+    System.out.println("Guesses left: " + game.getTriesLeft());
+    Printer.printBoard(game.getBoard());
 
     if (game.getPlayerWon()) {
       System.out.println("\nCongratulations. You won in " + game.getTriesUsed() + " guesses.");
