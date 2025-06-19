@@ -4,7 +4,6 @@ import com.mbfc.wordleclone.lib.comparator.Comparator;
 import com.mbfc.wordleclone.lib.comparator.ComparatorResult;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Random;
 
 /**
  * An implementation of the {@link Game} class using strings.
