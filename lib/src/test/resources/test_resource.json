@@ -1,0 +1,14 @@
+{
+  "key": "name",
+  "fields": {
+    "name": "string",
+    "birth": "datetime",
+    "salary": "double",
+    "cars": "integer",
+    "kids": "set"
+  },
+  "data": [
+    { "name": "john", "birth": "2000-01-01 11:00", "salary": "2000.50", "cars": "2", "kids": "kamil,asia" },
+    { "name": "john", "birth": "2000-01-01 11:00", "salary": "2000.50", "cars": "2", "kids": "kamil,asia" }
+  ]
+}
