@@ -11,8 +11,8 @@ import com.mbfc.wordleclone.lib.game.GameMode;
 import com.mbfc.wordleclone.lib.game.RandomGame;
 import com.mbfc.wordleclone.lib.game.SimpleEndlessGame;
 import com.mbfc.wordleclone.lib.game.SimpleGame;
-import com.mbfc.wordleclone.lib.game.SimpleObjectGame;
 import com.mbfc.wordleclone.lib.game.ZenGame;
+import com.mbfc.wordleclone.lib.game.ZenObjectGame;
 import com.mbfc.wordleclone.lib.game.ZenRandomGame;
 import com.mbfc.wordleclone.lib.json.Field;
 import com.mbfc.wordleclone.lib.parser.JsonParser;
@@ -294,10 +294,9 @@ public class GameMenu {
 
   private void playObjectMode() {
     gameLoop(
-        new SimpleObjectGame(
+        new ZenObjectGame(
             new ObjectComparator(),
             objectWordLists.get("Programming languages").right(),
-            6,
             objectWordLists.get("Programming languages").left()),
         objectWordLists.get("Programming languages").left());
   }
