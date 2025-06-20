@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 public class GameBoard<T> implements Iterable<Pair<List<ComparatorResult>, T>> {
   private List<List<ComparatorResult>> results;
   private List<T> guesses;
-  private final Class<T> type;
+  private final Class<?> type;
 
   /**
    * Constructs an empty {@code GameBoard}.
@@ -31,13 +31,13 @@ public class GameBoard<T> implements Iterable<Pair<List<ComparatorResult>, T>> {
    *
    * @param type type of the game board
    */
-  public GameBoard(Class<T> type) {
+  public GameBoard(Class<?> type) {
     results = new ArrayList();
     guesses = new ArrayList();
     this.type = type;
   }
 
-  public Class<T> getType() {
+  public Class<?> getType() {
     return type;
   }
 

@@ -1,6 +1,7 @@
 package com.mbfc.wordleclone.cli;
 
 import com.mbfc.wordleclone.lib.comparator.CompareException;
+import com.mbfc.wordleclone.lib.comparator.ObjectComparator;
 import com.mbfc.wordleclone.lib.comparator.StringComparator;
 import com.mbfc.wordleclone.lib.game.EndlessGame;
 import com.mbfc.wordleclone.lib.game.EndlessRandomGame;
@@ -10,10 +11,14 @@ import com.mbfc.wordleclone.lib.game.GameMode;
 import com.mbfc.wordleclone.lib.game.RandomGame;
 import com.mbfc.wordleclone.lib.game.SimpleEndlessGame;
 import com.mbfc.wordleclone.lib.game.SimpleGame;
+import com.mbfc.wordleclone.lib.game.SimpleObjectGame;
 import com.mbfc.wordleclone.lib.game.ZenGame;
 import com.mbfc.wordleclone.lib.game.ZenRandomGame;
+import com.mbfc.wordleclone.lib.json.Field;
+import com.mbfc.wordleclone.lib.parser.JsonParser;
 import com.mbfc.wordleclone.lib.parser.SimpleStringParser;
 import com.mbfc.wordleclone.lib.util.HighScoreManager;
+import com.mbfc.wordleclone.lib.util.Pair;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +26,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.TreeMap;
 import org.fusesource.jansi.Ansi;
 
 /**
@@ -36,13 +42,17 @@ public class GameMenu {
   private final Scanner scanner;
   // Cache of word lists stored as <list name, List<String>>
   private final Map<String, List<String>> wordLists;
+  private final Map<String, Pair<String, List<TreeMap<String, Field>>>> objectWordLists;
   private final SimpleStringParser parser;
+  private final JsonParser jsonParser;
 
   /** Constructs a new GameMenu instance. */
   public GameMenu() {
     scanner = new Scanner(System.in);
     wordLists = new HashMap<>();
+    objectWordLists = new HashMap<>();
     parser = new SimpleStringParser();
+    jsonParser = new JsonParser();
 
     loadDefaultResources();
   }
@@ -57,6 +67,9 @@ public class GameMenu {
       wordLists.put("4 letters", parser.parseResource("4letters.txt"));
       wordLists.put("5 letters", parser.parseResource("5letters.txt"));
       wordLists.put("6 letters", parser.parseResource("6letters.txt"));
+
+      objectWordLists.put(
+          "Programming languages", jsonParser.parseResource("/programming_languages.json"));
     } catch (Exception ignore) {
       // Ignore errors during default resource loading.
     }
@@ -127,7 +140,7 @@ public class GameMenu {
     System.out.println(Ansi.ansi().eraseScreen().cursor(0, 0));
     System.out.println("\nSelect data type to play with:");
     System.out.println("1. String");
-    System.out.println("2. Object (not implemented)");
+    System.out.println("2. Object");
     System.out.print("Choose an option: ");
     String typeOption = scanner.nextLine().trim();
 
@@ -136,7 +149,7 @@ public class GameMenu {
         playStringMode();
         break;
       case "2":
-        System.out.println("Object mode not implemented yet.");
+        playObjectMode();
         break;
       default:
         System.out.println("Invalid option.");
@@ -221,7 +234,7 @@ public class GameMenu {
       switch (selectedMode) {
         case SIMPLE:
           SimpleGame simpleGame = new SimpleGame(comparator, chosenList, lives);
-          gameLoop(simpleGame);
+          gameLoop(simpleGame, null);
           break;
 
         case ENDLESS:
@@ -241,12 +254,12 @@ public class GameMenu {
           // Tryby Zen nie wymagają liczby żyć ani wyboru listy, ale ZenClassic potrzebuje listy
           // słów.
           ZenGame zenGame = new ZenGame(comparator, chosenList);
-          gameLoop(zenGame);
+          gameLoop(zenGame, null);
           break;
 
         case RANDOM:
           RandomGame randomGame = new RandomGame(comparator, lives, length);
-          gameLoop(randomGame);
+          gameLoop(randomGame, null);
           break;
 
         case ENDLESS_RANDOM:
@@ -267,7 +280,7 @@ public class GameMenu {
 
         case ZEN_RANDOM:
           ZenRandomGame zenRandGame = new ZenRandomGame(comparator, length);
-          gameLoop(zenRandGame);
+          gameLoop(zenRandGame, null);
           break;
 
         default:
@@ -279,6 +292,16 @@ public class GameMenu {
     }
   }
 
+  private void playObjectMode() {
+    gameLoop(
+        new SimpleObjectGame(
+            new ObjectComparator(),
+            objectWordLists.get("Programming languages").right(),
+            6,
+            objectWordLists.get("Programming languages").left()),
+        objectWordLists.get("Programming languages").left());
+  }
+
   /**
    * Handles the game loop for Normal game mode.
    *
@@ -286,11 +309,11 @@ public class GameMenu {
    * an option to exit by typing "q"), and determines whether the game is won or lost. After the
    * game ends, asks the user if they want to play again and restarts the game loop if confirmed.
    */
-  private void gameLoop(Game<?, ?> game) {
+  private void gameLoop(Game<?, ?> game, String key) {
     do {
       System.out.println(Ansi.ansi().eraseScreen().cursor(0, 0));
       System.out.println("Guesses left: " + game.getTriesLeft());
-      Printer.printBoard(game.getBoard());
+      Printer.printBoard(game.getBoard(), key);
       System.out.print("\nGuess (or type 'q' to exit): ");
 
       String guess = scanner.nextLine().trim().toLowerCase();
@@ -310,7 +333,7 @@ public class GameMenu {
 
     System.out.println(Ansi.ansi().eraseScreen().cursor(0, 0));
     System.out.println("Guesses left: " + game.getTriesLeft());
-    Printer.printBoard(game.getBoard());
+    Printer.printBoard(game.getBoard(), key);
 
     System.out.println(game.getFinalGameMessage());
 
@@ -319,7 +342,7 @@ public class GameMenu {
 
     if (option.equalsIgnoreCase("y")) {
       game.reset();
-      gameLoop(game);
+      gameLoop(game, key);
     }
   }
 
@@ -339,7 +362,7 @@ public class GameMenu {
       System.out.println("Current Score: " + game.getScore());
       System.out.println("High Score: " + highScoreManager.getHighScore());
       System.out.println("Lives left: " + game.getLives());
-      Printer.printBoard(game.getBoard());
+      Printer.printBoard(game.getBoard(), null);
       System.out.print("\nGuess (or type 'q' to exit): ");
 
       String guess = scanner.nextLine().trim().toLowerCase();
@@ -360,7 +383,7 @@ public class GameMenu {
           System.out.println("Current Score: " + simulatedScore);
           System.out.println("High Score: " + highScoreManager.getHighScore());
           System.out.println("Lives left: " + simulatedLives);
-          Printer.printBoard(game.getBoard());
+          Printer.printBoard(game.getBoard(), null);
           System.out.println(
               "\nCongratulations! The word was guessed: "
                   + provenTarget
@@ -380,7 +403,7 @@ public class GameMenu {
     }
 
     System.out.println(Ansi.ansi().eraseScreen().cursor(0, 0));
-    Printer.printBoard(game.getBoard());
+    Printer.printBoard(game.getBoard(), null);
     System.out.println(game.getFinalGameMessage());
     System.out.println("High Score: " + highScoreManager.getHighScore());
     System.out.println("\nDo you want to play again? [y/n]");
