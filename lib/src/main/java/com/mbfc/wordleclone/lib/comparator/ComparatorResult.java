@@ -19,7 +19,13 @@ public enum ComparatorResult {
   PARTIAL("Partially correct"),
 
   /** Indicates that the guess is incorrect. */
-  INCORRECT("Incorrect");
+  INCORRECT("Incorrect"),
+
+  /** Indicates that the guess is too low. */
+  TOO_LOW("Too low"),
+
+  /** Indicates that the guess is too high. */
+  TOO_HIGH("Too high");
 
   private final String text;
 

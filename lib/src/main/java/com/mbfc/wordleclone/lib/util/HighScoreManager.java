@@ -35,6 +35,7 @@ public class HighScoreManager {
     try {
       Files.createDirectories(filePath.getParent());
     } catch (IOException ignore) {
+      // no handler
     }
 
     loadHighScore();

@@ -142,6 +142,7 @@ public class GameMenu {
     }
   }
 
+  /** Enum for game modes, that user can select. */
   public enum GameMode {
     SIMPLE("1"),
     ENDLESS("2"),
@@ -258,8 +259,8 @@ public class GameMenu {
           break;
 
         case ZEN_RANDOM:
-          ZenRandomGame zenRGame = new ZenRandomGame(comparator, length);
-          gameLoop(zenRGame);
+          ZenRandomGame zenRandGame = new ZenRandomGame(comparator, length);
+          gameLoop(zenRandGame);
           break;
 
         default:
@@ -342,8 +343,8 @@ public class GameMenu {
       try {
         game.play(guess);
         if (game.isRoundComplete()) {
-          String provenTarget = game.getTarget();
-          int attempts = game.getAttemptsTaken();
+          final String provenTarget = game.getTarget();
+          final int attempts = game.getAttemptsTaken();
           int bonus = game.getBonusTriesOnWin();
           int simulatedLives = game.getLives() + bonus;
           int simulatedScore = game.getScore() + 1;
