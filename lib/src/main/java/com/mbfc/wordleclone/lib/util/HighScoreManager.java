@@ -20,8 +20,7 @@ public class HighScoreManager {
   /**
    * Creates a new instance of HighScoreManager and loads the high score.
    *
-   * @param configName the name of the configuration file (e.g., "highscore_endless_classic.txt" or
-   *     an absolute path)
+   * @param configName the name of the configuration file (e.g., "highscore_endless_classic.txt")
    */
   public HighScoreManager(String configName) {
     Path givenPath = Paths.get(configName);

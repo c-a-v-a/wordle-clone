@@ -18,24 +18,25 @@ public abstract class EndlessGame<T, U> extends Game<T, U> {
   protected int score;
   protected String lastRoundResult;
   protected int lives;
+  protected final int initialLives; // nowy atrybut przechowujący początkową liczbę żyć
   protected boolean roundComplete = false;
   protected int attemptsTaken;
   protected final int bonusTriesOnWin;
 
   /**
-   * Creates a new endless mode game instance.
+   * Tworzy instancję gry endless.
    *
-   * @param type the type of game elements
-   * @param comparator the comparator that determines the correctness of a guess
-   * @param guessList the collection of valid guesses
-   * @param initialTries the initial number of lives (tries)
-   * @param bonusTriesOnWin the bonus lives awarded when a round is won
-   * @throws NoSuchElementException if the guess list is empty
+   * @param type typ elementów do gry
+   * @param comparator obiekt porównujący zgadywany wyraz z celem
+   * @param guessList lista z poprawnymi wyrazami (może być null w przypadku EndlessRandomGame)
+   * @param initialTries początkowa liczba żyć
+   * @param bonusTriesOnWin bonus żyć przy trafieniu rundy
    */
   public EndlessGame(
       Class<T> type, Comparator<T> comparator, U guessList, int initialTries, int bonusTriesOnWin)
       throws NoSuchElementException {
-    super(type, comparator, guessList, initialTries); // initial tries serve as the starting pool
+    super(type, comparator, guessList, initialTries);
+    this.initialLives = initialTries; // zapisujemy początkową wartość
     this.score = 0;
     this.lastRoundResult = null;
     this.lives = initialTries;
@@ -73,7 +74,26 @@ public abstract class EndlessGame<T, U> extends Game<T, U> {
     }
   }
 
-  /** Commits the finished round and adds score for user. */
+  /**
+   * Commits the current round if it has been completed.
+   *
+   * <p>If the current round is complete (i.e. all letters of the guess are correct), this method
+   * performs the following actions:
+   *
+   * <ul>
+   *   <li>Increments the overall score by one.
+   *   <li>Adds a bonus number of lives (specified by {@code bonusTriesOnWin}) to the current lives.
+   *   <li>Resets the {@code roundComplete} flag to indicate that the current round is no longer
+   *       active.
+   *   <li>Calls {@link #resetRound()} to clear the game board, reset the number of tries, and
+   *       select a new random target, preparing for the next round.
+   * </ul>
+   *
+   * This approach maintains the endless mode logic by allowing multiple rounds without resetting
+   * the accumulated lives.
+   *
+   * @see #resetRound()
+   */
   public final void commitRound() {
     if (roundComplete) {
       score++;
@@ -88,9 +108,17 @@ public abstract class EndlessGame<T, U> extends Game<T, U> {
    * consistent behavior.
    */
   protected final void resetRound() {
-    this.board = new GameBoard<>(getBoard().getType()); // Using the type from the existing board
+    this.board = new GameBoard<>(getBoard().getType());
     this.triesUsed = 0;
-    selectRandomTarget(); // Abstract method implemented by the subclass
+    selectRandomTarget();
+  }
+
+  /** {@inheritDoc} */
+  @Override
+  public void reset() {
+    super.reset();
+    this.lives = initialLives;
+    this.score = 0;
   }
 
   /**
