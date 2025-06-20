@@ -3,6 +3,7 @@ package com.mbfc.wordleclone.cli;
 import com.mbfc.wordleclone.lib.comparator.CompareException;
 import com.mbfc.wordleclone.lib.comparator.StringComparator;
 import com.mbfc.wordleclone.lib.game.EndlessGame;
+import com.mbfc.wordleclone.lib.game.EndlessRandomGame;
 import com.mbfc.wordleclone.lib.game.Game;
 import com.mbfc.wordleclone.lib.game.GameException;
 import com.mbfc.wordleclone.lib.game.RandomGame;
@@ -180,7 +181,7 @@ public class GameMenu {
     System.out.println("2. Endless");
     System.out.println("3. Zen Classic");
     System.out.println("4. Random");
-    System.out.println("5. Endless Random (not implemented)");
+    System.out.println("5. Endless Random");
     System.out.println("6. Zen Random");
 
     System.out.print("Choose an option: ");
@@ -235,16 +236,15 @@ public class GameMenu {
           break;
 
         case ENDLESS:
-          final int bonusTries = 2;
+          final int endlessBonusTries = 2;
           System.out.println(
-              "Endless Mode! You get " + bonusTries + " bonus lives for each correct word.");
+              "Endless Mode! You get " + endlessBonusTries + " bonus lives for each correct word.");
           System.out.println("Press Enter to start...");
           scanner.nextLine();
 
           SimpleEndlessGame endlessGame =
-              new SimpleEndlessGame(comparator, chosenList, lives, bonusTries);
+              new SimpleEndlessGame(comparator, chosenList, lives, endlessBonusTries);
           HighScoreManager highScoreManager = new HighScoreManager("highscore_endless_classic.txt");
-          // HighScoreManager tworzy plik (np. w folderze .wrodle-clone w katalogu domowym)
           endlessGameLoop(endlessGame, highScoreManager);
           break;
 
@@ -256,6 +256,22 @@ public class GameMenu {
         case RANDOM:
           RandomGame randomGame = new RandomGame(comparator, lives, length);
           gameLoop(randomGame);
+          break;
+
+        case ENDLESS_RANDOM:
+          final int endlessRandombonusTries = 2;
+          System.out.println(
+              "Endless Random Mode! You get "
+                  + endlessRandombonusTries
+                  + " bonus lives for each correct word.");
+          System.out.println("Press Enter to start...");
+          scanner.nextLine();
+
+          EndlessRandomGame endlessGameRandom =
+              new EndlessRandomGame(comparator, lives, endlessRandombonusTries, length);
+          HighScoreManager highScoreManagerRandom =
+              new HighScoreManager("highscore_endless_random.txt");
+          endlessGameLoop(endlessGameRandom, highScoreManagerRandom);
           break;
 
         case ZEN_RANDOM:
@@ -376,7 +392,13 @@ public class GameMenu {
     Printer.printBoard(game.getBoard());
     System.out.println(game.getFinalGameMessage());
     System.out.println("High Score: " + highScoreManager.getHighScore());
-    System.out.println("\nPress Enter to return to the main menu...");
+    System.out.println("\nDo you want to play again? [y/n]");
+    String option = scanner.nextLine().trim();
+
+    if (option.equalsIgnoreCase("y")) {
+      game.reset();
+      endlessGameLoop(game, highScoreManager);
+    }
     scanner.nextLine();
   }
 }
