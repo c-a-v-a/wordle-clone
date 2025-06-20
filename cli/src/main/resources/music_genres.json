@@ -1,0 +1,36 @@
+{
+  "key": "name",
+  "fields": {
+    "name": "string",
+    "origin": "integer",
+    "styles": "set",
+    "popularity": "set"
+  },
+  "data": [
+    { "name": "rock", "origin": "1950", "styles": "hard,psychedelic,alternative", "popularity": "mainstream,global" },
+    { "name": "jazz", "origin": "1910", "styles": "swing,bebop,fusion", "popularity": "global,classic" },
+    { "name": "hip hop", "origin": "1970", "styles": "trap,boom bap,conscious", "popularity": "mainstream,urban" },
+    { "name": "classical", "origin": "1700", "styles": "baroque,romantic,modern", "popularity": "academic,europe" },
+    { "name": "pop", "origin": "1960", "styles": "dance,electropop,teen pop", "popularity": "mainstream,global" },
+    { "name": "metal", "origin": "1970", "styles": "thrash,death,black", "popularity": "subculture,global" },
+    { "name": "blues", "origin": "1900", "styles": "delta,chicago,electric", "popularity": "roots,america" },
+    { "name": "reggae", "origin": "1960", "styles": "roots,dub,dancehall", "popularity": "jamaica,global" },
+    { "name": "electronic", "origin": "1980", "styles": "techno,house,trance", "popularity": "club,global" },
+    { "name": "country", "origin": "1920", "styles": "bluegrass,americana,modern", "popularity": "rural,america" },
+    { "name": "funk", "origin": "1960", "styles": "soul,go-go,p-funk", "popularity": "urban,classic" },
+    { "name": "r&b", "origin": "1940", "styles": "neo soul,contemporary,motown", "popularity": "urban,mainstream" },
+    { "name": "salsa", "origin": "1960", "styles": "cubana,romantica,timba", "popularity": "latin,global" },
+    { "name": "punk", "origin": "1970", "styles": "hardcore,post-punk,oi", "popularity": "underground,urban" },
+    { "name": "techno", "origin": "1980", "styles": "detroit,minimal,acid", "popularity": "clubs,europe" },
+    { "name": "trance", "origin": "1990", "styles": "uplifting,psytrance,vocal", "popularity": "festivals,europe" },
+    { "name": "drum and bass", "origin": "1990", "styles": "liquid,jump-up,neurofunk", "popularity": "clubs,underground" },
+    { "name": "k-pop", "origin": "1990", "styles": "dance,hip hop,electropop", "popularity": "asia,global" },
+    { "name": "afrobeats", "origin": "2000", "styles": "highlife,dancehall,fusion", "popularity": "africa,global" },
+    { "name": "edm", "origin": "2010", "styles": "big room,trap,progressive", "popularity": "mainstream,festivals" },
+    { "name": "folk", "origin": "1800", "styles": "traditional,indie,new folk", "popularity": "regional,europe" },
+    { "name": "grunge", "origin": "1980", "styles": "alternative,sludge,post-grunge", "popularity": "america,classic" },
+    { "name": "house", "origin": "1980", "styles": "deep,progressive,funky", "popularity": "clubs,europe" },
+    { "name": "dubstep", "origin": "2000", "styles": "brostep,melodic,riddim", "popularity": "festivals,internet" },
+    { "name": "gospel", "origin": "1930", "styles": "traditional,contemporary,urban", "popularity": "religious,america" }
+  ]
+}

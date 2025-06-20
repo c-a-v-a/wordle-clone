@@ -120,7 +120,9 @@ public class GameMenu {
 
     switch (option) {
       case "1":
-        System.out.print("Enter the file path to the word list:");
+        System.out.println("Example that you can try in wordle-clone dir: \n"
+                          +"./cli/src/main/resources/spanish5letters.txt");        
+        System.out.print("Enter the file path to the word list (absolute or inside project folder as above):");
         String filePath = scanner.nextLine().trim();
 
         System.out.print("Enter a name for this list: ");
@@ -141,7 +143,9 @@ public class GameMenu {
         }
         break;
       case "2":
-        System.out.print("Enter the file path to the word list:");
+        System.out.println("Example that you can try in wordle-clone dir: \n"
+                          +"./cli/src/main/resources/music_genres.json");        
+        System.out.print("Enter the file path to the word list (absolute or inside project folder as above):");
         String p = scanner.nextLine().trim();
 
         System.out.print("Enter a name for this list: ");
@@ -160,6 +164,7 @@ public class GameMenu {
         System.out.println("Invalid option.");
     }
 
+    System.out.println("Press Enter to continue...");
     scanner.nextLine();
   }
 
@@ -265,7 +270,7 @@ public class GameMenu {
       for (String key : wordLists.keySet()) {
         System.out.println("- " + key);
       }
-      System.out.print("Enter the name of the word list to use: ");
+      System.out.print("Enter the name of the word list to use (\"5 letters\" by default): ");
       String listKey = scanner.nextLine().trim();
       chosenList = wordLists.get(listKey);
       if (chosenList == null) {
@@ -274,8 +279,9 @@ public class GameMenu {
       }
       length = chosenList.get(0).length();
     }
-
+    System.out.println("Press Enter to continue...");
     scanner.nextLine();
+
     StringComparator comparator = new StringComparator();
     try {
       switch (selectedMode) {
@@ -387,7 +393,8 @@ public class GameMenu {
     for (String key : objectWordLists.keySet()) {
       System.out.println("- " + key);
     }
-    System.out.print("Enter the name of the word list to use: ");
+    System.out.print(
+        "Enter the name of the word list to use (\"Programming languages\" by default): ");
     String listKey = scanner.nextLine().trim();
     Pair<String, List<TreeMap<String, Field>>> chosenList = objectWordLists.get(listKey);
     if (chosenList == null) {
@@ -396,6 +403,7 @@ public class GameMenu {
       chosenList = objectWordLists.get("Programming languages");
     }
 
+    System.out.println("Press Enter to continue...");
     scanner.nextLine();
     ObjectComparator comparator = new ObjectComparator();
     try {
