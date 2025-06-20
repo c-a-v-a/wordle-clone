@@ -61,7 +61,7 @@ public class SimpleEndlessGameTest {
     // and the remaining attempts (lives) should equal initialTries - 1.
     // The score remains 0.
     assertFalse(game.getBoard().isEmpty());
-    assertEquals(initialTries - 1, game.getTriesLeft());
+    assertEquals(initialTries - 1, Integer.parseInt(game.getTriesLeft()));
     assertEquals(0, game.getScore());
   }
 
@@ -83,7 +83,7 @@ public class SimpleEndlessGameTest {
     // Then: the board should be reset (empty), the remaining attempts restored to initialTries,
     // and the score incremented by 1.
     assertTrue(game.getBoard().isEmpty());
-    assertEquals(initialTries, game.getTriesLeft());
+    assertEquals(initialTries, Integer.parseInt(game.getTriesLeft()));
     assertEquals(1, game.getScore());
   }
 
@@ -105,7 +105,7 @@ public class SimpleEndlessGameTest {
 
     // Then: the game is finished, the remaining tries are 0, and score remains 0.
     assertTrue(game.getGameFinished());
-    assertEquals(0, game.getTriesLeft());
+    assertEquals(0, Integer.parseInt(game.getTriesLeft()));
     assertEquals(0, game.getScore());
   }
 }

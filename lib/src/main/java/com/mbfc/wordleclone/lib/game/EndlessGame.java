@@ -137,7 +137,7 @@ public abstract class EndlessGame<T, U> extends Game<T, U> {
    *
    * @return the score
    */
-  public final int getScore() {
+  public int getScore() {
     return score;
   }
 
@@ -146,7 +146,7 @@ public abstract class EndlessGame<T, U> extends Game<T, U> {
    *
    * @return the number of lives left
    */
-  public final int getLives() {
+  public int getLives() {
     return lives;
   }
 
@@ -159,7 +159,7 @@ public abstract class EndlessGame<T, U> extends Game<T, U> {
     return attemptsTaken;
   }
 
-    /**
+  /**
    * Returns the number of guesses user gains after win.
    *
    * @return the number of guesses after win
