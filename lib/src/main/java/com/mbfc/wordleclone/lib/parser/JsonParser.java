@@ -15,14 +15,14 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Parser that reads a file or classpath resource and parses it into a {@link Pair} of {@code
- * String} and {@code HashMap<String, Field>}.
+ * String} and {@code TreeMap<String, Field>}.
  *
  * <p>The {@code String} in the {@link Pair} is the primary key, so the thing that player will try
  * to guess. The second element of the {@link Pair} is the word list.
@@ -62,19 +62,19 @@ import java.util.Map;
  *
  * @see Parser
  */
-public class JsonParser implements Parser<Pair<String, List<HashMap<String, Field>>>> {
+public class JsonParser implements Parser<Pair<String, List<TreeMap<String, Field>>>> {
   /**
    * {@inheritDoc}
    *
    * <p>This implementation reads the classpath resource json file.
    */
   @Override
-  public Pair<String, List<HashMap<String, Field>>> parseResource(String resourcePath)
+  public Pair<String, List<TreeMap<String, Field>>> parseResource(String resourcePath)
       throws IOException {
     ObjectMapper mapper = new ObjectMapper();
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     JsonData wrapper = null;
-    List<HashMap<String, Field>> wordList = new ArrayList<>();
+    List<TreeMap<String, Field>> wordList = new ArrayList<>();
     InputStream inputStream = JsonParser.class.getResourceAsStream(resourcePath);
 
     if (inputStream == null) {
@@ -89,7 +89,7 @@ public class JsonParser implements Parser<Pair<String, List<HashMap<String, Fiel
 
     try {
       for (Map<String, String> element : wrapper.getData()) {
-        HashMap<String, Field> x = new HashMap<>();
+        TreeMap<String, Field> x = new TreeMap<>();
 
         for (Map.Entry<String, String> entry : element.entrySet()) {
           switch (wrapper.getFields().get(entry.getKey())) {
@@ -132,11 +132,11 @@ public class JsonParser implements Parser<Pair<String, List<HashMap<String, Fiel
    * <p>This implementation reads the specified json file.
    */
   @Override
-  public Pair<String, List<HashMap<String, Field>>> parseFile(String filePath) throws IOException {
+  public Pair<String, List<TreeMap<String, Field>>> parseFile(String filePath) throws IOException {
     ObjectMapper mapper = new ObjectMapper();
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     JsonData wrapper = null;
-    List<HashMap<String, Field>> wordList = new ArrayList<>();
+    List<TreeMap<String, Field>> wordList = new ArrayList<>();
     InputStream inputStream = new FileInputStream(filePath);
 
     if (inputStream == null) {
@@ -151,7 +151,7 @@ public class JsonParser implements Parser<Pair<String, List<HashMap<String, Fiel
 
     try {
       for (Map<String, String> element : wrapper.getData()) {
-        HashMap<String, Field> x = new HashMap<>();
+        TreeMap<String, Field> x = new TreeMap<>();
 
         for (Map.Entry<String, String> entry : element.entrySet()) {
           switch (wrapper.getFields().get(entry.getKey())) {

@@ -12,9 +12,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.TreeMap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -57,7 +57,7 @@ public class JsonParserTest {
     String resourcePath = "/test_resource.json";
 
     // when
-    Pair<String, List<HashMap<String, Field>>> result = parser.parseResource(resourcePath);
+    Pair<String, List<TreeMap<String, Field>>> result = parser.parseResource(resourcePath);
 
     // then
     assertNotNull(result);
@@ -139,7 +139,7 @@ public class JsonParserTest {
     Files.writeString(tempFile, jsonString, StandardCharsets.UTF_8);
 
     // when
-    Pair<String, List<HashMap<String, Field>>> result = parser.parseFile(tempFile.toString());
+    Pair<String, List<TreeMap<String, Field>>> result = parser.parseFile(tempFile.toString());
 
     // then
     assertNotNull(result);

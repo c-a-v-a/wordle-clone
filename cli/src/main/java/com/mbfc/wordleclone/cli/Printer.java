@@ -14,6 +14,8 @@ public class Printer {
       case CORRECT -> "green";
       case PARTIAL -> "yellow";
       case INCORRECT -> "red";
+      case TOO_HIGH -> "cyan";
+      case TOO_LOW -> "magenta";
     };
   }
 

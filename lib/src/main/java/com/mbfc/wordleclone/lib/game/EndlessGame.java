@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
  * score, lives, and bonus lives.
  *
  * @param <T> the type of game elements (e.g., String)
- * @param <U> the type of collection from which valid guesses are drawn (e.g., List<String>)
+ * @param <U> the type of collection from which valid guesses are drawn (e.g., {@code List<String>})
  */
 public abstract class EndlessGame<T, U> extends Game<T, U> {
 
@@ -73,6 +73,7 @@ public abstract class EndlessGame<T, U> extends Game<T, U> {
     }
   }
 
+  /** Commits the finished round and adds score for user. */
   public final void commitRound() {
     if (roundComplete) {
       score++;
