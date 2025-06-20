@@ -26,7 +26,7 @@ public abstract class Game<T, U> {
   /** List of valid guesses. */
   protected final U guessList;
 
-  private final Class<T> type;
+  private final Class<?> type;
 
   /**
    * The value that needs to be guessed.
@@ -64,7 +64,7 @@ public abstract class Game<T, U> {
    * @param guessList the list of valid guesses
    * @param tries the maximum number of guesses that user can make
    */
-  public Game(Class<T> type, Comparator<T> comparator, U guessList, int tries)
+  public Game(Class<?> type, Comparator<T> comparator, U guessList, int tries)
       throws NoSuchElementException {
     this.comparator = comparator;
     this.guessList = guessList;
