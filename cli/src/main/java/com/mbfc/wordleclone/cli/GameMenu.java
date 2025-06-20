@@ -5,16 +5,20 @@ import com.mbfc.wordleclone.lib.comparator.StringComparator;
 import com.mbfc.wordleclone.lib.game.EndlessGame;
 import com.mbfc.wordleclone.lib.game.Game;
 import com.mbfc.wordleclone.lib.game.GameException;
+import com.mbfc.wordleclone.lib.game.RandomGame;
 import com.mbfc.wordleclone.lib.game.SimpleEndlessGame;
 import com.mbfc.wordleclone.lib.game.SimpleGame;
+import com.mbfc.wordleclone.lib.game.ZenGame;
 import com.mbfc.wordleclone.lib.game.ZenRandomGame;
 import com.mbfc.wordleclone.lib.parser.SimpleStringParser;
 import com.mbfc.wordleclone.lib.util.HighScoreManager;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Scanner;
 import org.fusesource.jansi.Ansi;
 
@@ -138,6 +142,30 @@ public class GameMenu {
     }
   }
 
+  public enum GameMode {
+    SIMPLE("1"),
+    ENDLESS("2"),
+    ZEN_CLASSIC("3"),
+    RANDOM("4"),
+    ENDLESS_RANDOM("5"),
+    ZEN_RANDOM("6");
+
+    private final String option;
+
+    GameMode(String option) {
+      this.option = option;
+    }
+
+    public String getOption() {
+      return option;
+    }
+
+    // Metoda z wykorzystaniem Optional, by zwrócić tryb na podstawie opcji
+    public static Optional<GameMode> fromOption(String option) {
+      return Arrays.stream(values()).filter(mode -> mode.getOption().equals(option)).findFirst();
+    }
+  }
+
   /**
    * Handles the "Play" option for String-based games.
    *
@@ -147,29 +175,42 @@ public class GameMenu {
   private void playStringMode() {
     System.out.println(Ansi.ansi().eraseScreen().cursor(0, 0));
     System.out.println("\nSelect game mode:");
-    System.out.println("1. Endless");
-    System.out.println("2. Normal");
-    System.out.println("3. Zen Random");
+    System.out.println("1. Normal");
+    System.out.println("2. Endless");
+    System.out.println("3. Zen Classic");
+    System.out.println("4. Random");
+    System.out.println("5. Endless Random (not implemented)");
+    System.out.println("6. Zen Random");
+
     System.out.print("Choose an option: ");
     String modeOption = scanner.nextLine().trim();
 
-    System.out.print("Enter the number of attempts (default 6): ");
-    int lives;
-    try {
+    Optional<GameMode> optionalMode = GameMode.fromOption(modeOption);
+    if (!optionalMode.isPresent()) {
+      System.out.println("Invalid option.");
+      return;
+    }
+    GameMode selectedMode = optionalMode.get();
+
+    int lives = 6;
+    if (selectedMode != GameMode.ZEN_RANDOM) {
+      System.out.print("Enter the number of attempts (default 6): ");
+
+      try {
         lives = Integer.parseInt(scanner.nextLine().trim());
-    } catch (NumberFormatException e) {
+      } catch (NumberFormatException e) {
         System.out.println("Invalid number format. Using default lives = 6.");
-        lives = 6;
+      }
     }
 
     if (wordLists.isEmpty()) {
-        System.out.println("No word lists loaded. Please load a word list first.");
-        return;
+      System.out.println("No word lists loaded. Please load a word list first.");
+      return;
     }
 
     System.out.println("Available word lists:");
     for (String key : wordLists.keySet()) {
-        System.out.println("- " + key);
+      System.out.println("- " + key);
     }
 
     System.out.print("Enter the name of the word list to use: ");
@@ -177,39 +218,58 @@ public class GameMenu {
     List<String> chosenList = wordLists.get(listKey);
 
     if (chosenList == null) {
-        System.out.println("No word list with that name exists. Chosen: \"5 letters\" by default");
-        chosenList = wordLists.get("5 letters");
+      System.out.println("No word list with that name exists. Chosen: \"5 letters\" by default");
+      chosenList = wordLists.get("5 letters");
     }
+
+    int length = chosenList.get(0).length();
 
     StringComparator comparator = new StringComparator();
     try {
-        if ("1".equals(modeOption)) {
-            final int bonusTries = 2;
-            System.out.println("Endless Mode! You get " + bonusTries + " bonus lives for each correct word.");
-            System.out.println("Press Enter to start...");
-            scanner.nextLine();
 
-            SimpleEndlessGame game = new SimpleEndlessGame(comparator, chosenList, lives, bonusTries);
-            HighScoreManager highScoreManager = new HighScoreManager("cli/src/main/resources/highscore_endless_classic.txt");
-            // HighScoreManager tworzy plik (np. w folderze .wrodle-clone w katalogu domowym)
-            endlessGameLoop(game, highScoreManager);
+      switch (selectedMode) {
+        case SIMPLE:
+          SimpleGame simpleGame = new SimpleGame(comparator, chosenList, lives);
+          gameLoop(simpleGame);
+          break;
 
-        } else if ("2".equals(modeOption)) {
-            SimpleGame game = new SimpleGame(comparator, chosenList, lives);
-            gameLoop(game);
+        case ENDLESS:
+          final int bonusTries = 2;
+          System.out.println(
+              "Endless Mode! You get " + bonusTries + " bonus lives for each correct word.");
+          System.out.println("Press Enter to start...");
+          scanner.nextLine();
 
-        } else if ("3".equals(modeOption)) {
-            ZenRandomGame game = new ZenRandomGame(comparator, 5);
-            gameLoop(game);
+          SimpleEndlessGame endlessGame =
+              new SimpleEndlessGame(comparator, chosenList, lives, bonusTries);
+          HighScoreManager highScoreManager = new HighScoreManager("highscore_endless_classic.txt");
+          // HighScoreManager tworzy plik (np. w folderze .wrodle-clone w katalogu domowym)
+          endlessGameLoop(endlessGame, highScoreManager);
+          break;
 
-        } else {
-            System.out.println("Invalid option.");
-        }
+        case ZEN_CLASSIC:
+          ZenGame zenGame = new ZenGame(comparator, chosenList);
+          gameLoop(zenGame);
+          break;
+
+        case RANDOM:
+          RandomGame randomGame = new RandomGame(comparator, lives, length);
+          gameLoop(randomGame);
+          break;
+
+        case ZEN_RANDOM:
+          ZenRandomGame zenRGame = new ZenRandomGame(comparator, length);
+          gameLoop(zenRGame);
+          break;
+
+        default:
+          System.out.println("Invalid option.");
+          break;
+      }
     } catch (NoSuchElementException e) {
-        System.out.println("Error creating game: " + e.getMessage());
+      System.out.println("Error creating game: " + e.getMessage());
     }
   }
-
 
   /**
    * Handles the game loop for Normal game mode.
