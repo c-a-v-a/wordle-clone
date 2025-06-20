@@ -20,9 +20,10 @@ public class SimpleObjectGame extends Game<TreeMap<String, Field>, List<TreeMap<
   /**
    * Creates a new game instance, using {@link Game} constructor.
    *
-   * @param comparator {@code String} comparator that determines correctness of the guess
-   * @param guessList the {@code List<String>} of valid guesses
+   * @param comparator comparator that determines correctness of the guess
+   * @param guessList the list of valid guesses
    * @param tries the maximum number of guesses that user can make
+   * @param key the key of the value that player tries to guess
    */
   public SimpleObjectGame(
       Comparator<TreeMap<String, Field>> comparator,
@@ -83,5 +84,9 @@ public class SimpleObjectGame extends Game<TreeMap<String, Field>, List<TreeMap<
   @Override
   public String getTarget() {
     return ((StringField) target.get(key)).getValue();
+  }
+
+  public String getKey() {
+    return key;
   }
 }
