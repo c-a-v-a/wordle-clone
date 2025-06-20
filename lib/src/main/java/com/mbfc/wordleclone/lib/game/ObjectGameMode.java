@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Optional;
 
 /**
- * An enumeration representing the available game modes.
+ * An enumeration representing the available game modes for the object game.
  *
  * <p>This enum defines several constants used to differentiate between game modes. Each mode is
  * associated with a unique option (a String) used for mode selection. The defined modes are:
@@ -13,9 +13,6 @@ import java.util.Optional;
  *   <li>{@code SIMPLE} - the standard mode.
  *   <li>{@code ENDLESS} - endless mode without strict round boundaries.
  *   <li>{@code ZEN_CLASSIC} - a Zen variant of the classic mode.
- *   <li>{@code RANDOM} - mode with randomly generated targets.
- *   <li>{@code ENDLESS_RANDOM} - endless mode with random targets.
- *   <li>{@code ZEN_RANDOM} - a Zen variant with random targets.
  * </ul>
  *
  * <p>This enum provides the method {@link #getOption()} to obtain the associated selection option
@@ -23,13 +20,10 @@ import java.util.Optional;
  *
  * @see java.util.Optional
  */
-public enum GameMode {
+public enum ObjectGameMode {
   SIMPLE("1"),
   ENDLESS("2"),
-  ZEN_CLASSIC("3"),
-  RANDOM("4"),
-  ENDLESS_RANDOM("5"),
-  ZEN_RANDOM("6");
+  ZEN_CLASSIC("3");
 
   private final String option;
 
@@ -38,7 +32,7 @@ public enum GameMode {
    *
    * @param option the selection option associated with this game mode
    */
-  GameMode(String option) {
+  ObjectGameMode(String option) {
     this.option = option;
   }
 
@@ -62,7 +56,7 @@ public enum GameMode {
    * @return an {@link Optional} containing the corresponding {@code GameMode} if found, or {@link
    *     Optional#empty()} otherwise
    */
-  public static Optional<GameMode> fromOption(String option) {
+  public static Optional<ObjectGameMode> fromOption(String option) {
     return Arrays.stream(values()).filter(mode -> mode.getOption().equals(option)).findFirst();
   }
 }

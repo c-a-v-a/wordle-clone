@@ -33,7 +33,7 @@ public abstract class EndlessGame<T, U> extends Game<T, U> {
    * @param bonusTriesOnWin bonus żyć przy trafieniu rundy
    */
   public EndlessGame(
-      Class<T> type, Comparator<T> comparator, U guessList, int initialTries, int bonusTriesOnWin)
+      Class<?> type, Comparator<T> comparator, U guessList, int initialTries, int bonusTriesOnWin)
       throws NoSuchElementException {
     super(type, comparator, guessList, initialTries);
     this.initialLives = initialTries; // zapisujemy początkową wartość
@@ -89,7 +89,7 @@ public abstract class EndlessGame<T, U> extends Game<T, U> {
    *       select a new random target, preparing for the next round.
    * </ul>
    *
-   * This approach maintains the endless mode logic by allowing multiple rounds without resetting
+   * <p>This approach maintains the endless mode logic by allowing multiple rounds without resetting
    * the accumulated lives.
    *
    * @see #resetRound()

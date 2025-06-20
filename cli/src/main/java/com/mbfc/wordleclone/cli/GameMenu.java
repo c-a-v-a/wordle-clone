@@ -8,9 +8,12 @@ import com.mbfc.wordleclone.lib.game.EndlessRandomGame;
 import com.mbfc.wordleclone.lib.game.Game;
 import com.mbfc.wordleclone.lib.game.GameException;
 import com.mbfc.wordleclone.lib.game.GameMode;
+import com.mbfc.wordleclone.lib.game.ObjectEndlessGame;
+import com.mbfc.wordleclone.lib.game.ObjectGameMode;
 import com.mbfc.wordleclone.lib.game.RandomGame;
 import com.mbfc.wordleclone.lib.game.SimpleEndlessGame;
 import com.mbfc.wordleclone.lib.game.SimpleGame;
+import com.mbfc.wordleclone.lib.game.SimpleObjectGame;
 import com.mbfc.wordleclone.lib.game.ZenGame;
 import com.mbfc.wordleclone.lib.game.ZenObjectGame;
 import com.mbfc.wordleclone.lib.game.ZenRandomGame;
@@ -110,25 +113,54 @@ public class GameMenu {
    */
   private void loadListOption() {
     System.out.println(Ansi.ansi().eraseScreen().cursor(0, 0));
-    System.out.print("Enter the file path to the word list (.txt): ");
-    String filePath = scanner.nextLine().trim();
+    System.out.println("Select the type of list you want to load");
+    System.out.println("1. Normal (.txt)");
+    System.out.println("2. Object (.json)");
+    String option = scanner.nextLine().trim();
 
-    System.out.print("Enter a name for this list: ");
-    String listName = scanner.nextLine().trim();
+    switch (option) {
+      case "1":
+        System.out.print("Enter the file path to the word list:");
+        String filePath = scanner.nextLine().trim();
 
-    try {
-      List<String> words = parser.parseFile(filePath);
+        System.out.print("Enter a name for this list: ");
+        String listName = scanner.nextLine().trim();
 
-      if (words.isEmpty()) {
-        System.out.println("The loaded word list is empty.");
-        return;
-      }
+        try {
+          List<String> words = parser.parseFile(filePath);
 
-      wordLists.put(listName, words);
-      System.out.println("Word list '" + listName + "' loaded successfully.");
-    } catch (IOException e) {
-      System.out.println("Error loading word list: " + e.getMessage());
+          if (words.isEmpty()) {
+            System.out.println("The loaded word list is empty.");
+            return;
+          }
+
+          wordLists.put(listName, words);
+          System.out.println("Word list '" + listName + "' loaded successfully.");
+        } catch (IOException e) {
+          System.out.println("Error loading word list: " + e.getMessage());
+        }
+        break;
+      case "2":
+        System.out.print("Enter the file path to the word list:");
+        String p = scanner.nextLine().trim();
+
+        System.out.print("Enter a name for this list: ");
+        String n = scanner.nextLine().trim();
+
+        try {
+          Pair<String, List<TreeMap<String, Field>>> map = jsonParser.parseFile(p);
+
+          objectWordLists.put(n, map);
+          System.out.println("Word list '" + n + "' loaded successfully.");
+        } catch (IOException e) {
+          System.out.println("Error loading word list: " + e.getMessage());
+        }
+        break;
+      default:
+        System.out.println("Invalid option.");
     }
+
+    scanner.nextLine();
   }
 
   /**
@@ -197,6 +229,20 @@ public class GameMenu {
       }
     }
 
+    int addedLives = 2;
+    if (selectedMode.name().contains("ENDLESS")) {
+      System.out.print(
+          "Enter the number of bonus tries added after each succesfull guess (default = 2): ");
+      String addedInput = scanner.nextLine().trim();
+      if (!addedInput.isEmpty()) {
+        try {
+          addedLives = Integer.parseInt(addedInput);
+        } catch (NumberFormatException e) {
+          System.out.println("Invalid number format. Using default added tries = 2.");
+        }
+      }
+    }
+
     int length = 5;
     List<String> chosenList = null;
     if (selectedMode.name().contains("RANDOM")) {
@@ -229,6 +275,7 @@ public class GameMenu {
       length = chosenList.get(0).length();
     }
 
+    scanner.nextLine();
     StringComparator comparator = new StringComparator();
     try {
       switch (selectedMode) {
@@ -238,16 +285,15 @@ public class GameMenu {
           break;
 
         case ENDLESS:
-          final int endlessBonusTries = 2;
           System.out.println(
-              "Endless Mode! You get " + endlessBonusTries + " bonus lives for each correct word.");
+              "Endless Mode! You get " + addedLives + " bonus lives for each correct word.");
           System.out.println("Press Enter to start...");
           scanner.nextLine();
 
           SimpleEndlessGame endlessGame =
-              new SimpleEndlessGame(comparator, chosenList, lives, endlessBonusTries);
+              new SimpleEndlessGame(comparator, chosenList, lives, addedLives);
           HighScoreManager highScoreManager = new HighScoreManager("highscore_endless_classic.txt");
-          endlessGameLoop(endlessGame, highScoreManager);
+          endlessGameLoop(endlessGame, highScoreManager, null);
           break;
 
         case ZEN_CLASSIC:
@@ -263,19 +309,16 @@ public class GameMenu {
           break;
 
         case ENDLESS_RANDOM:
-          final int endlessRandomBonusTries = 2;
           System.out.println(
-              "Endless Random Mode! You get "
-                  + endlessRandomBonusTries
-                  + " bonus lives for each correct word.");
+              "Endless Random Mode! You get " + addedLives + " bonus lives for each correct word.");
           System.out.println("Press Enter to start...");
           scanner.nextLine();
 
           EndlessRandomGame endlessGameRandom =
-              new EndlessRandomGame(comparator, lives, endlessRandomBonusTries, length);
+              new EndlessRandomGame(comparator, lives, addedLives, length);
           HighScoreManager highScoreManagerRandom =
               new HighScoreManager("highscore_endless_random.txt");
-          endlessGameLoop(endlessGameRandom, highScoreManagerRandom);
+          endlessGameLoop(endlessGameRandom, highScoreManagerRandom, null);
           break;
 
         case ZEN_RANDOM:
@@ -293,12 +336,104 @@ public class GameMenu {
   }
 
   private void playObjectMode() {
-    gameLoop(
-        new ZenObjectGame(
-            new ObjectComparator(),
-            objectWordLists.get("Programming languages").right(),
-            objectWordLists.get("Programming languages").left()),
-        objectWordLists.get("Programming languages").left());
+    System.out.println(Ansi.ansi().eraseScreen().cursor(0, 0));
+    System.out.println("\nSelect game mode:");
+    System.out.println("1. Normal");
+    System.out.println("2. Endless");
+    System.out.println("3. Zen");
+
+    System.out.print("Choose an option: ");
+    String modeOption = scanner.nextLine().trim();
+
+    Optional<ObjectGameMode> optionalMode = ObjectGameMode.fromOption(modeOption);
+    if (!optionalMode.isPresent()) {
+      System.out.println("Invalid option.");
+      return;
+    }
+    ObjectGameMode selectedMode = optionalMode.get();
+
+    int lives = 6;
+    if (!selectedMode.name().contains("ZEN")) {
+      System.out.print("Enter the number of attempts (default 6): ");
+      String livesInput = scanner.nextLine().trim();
+      if (!livesInput.isEmpty()) {
+        try {
+          lives = Integer.parseInt(livesInput);
+        } catch (NumberFormatException e) {
+          System.out.println("Invalid number format. Using default lives = 6.");
+        }
+      }
+    }
+
+    int addedLives = 2;
+    if (selectedMode.name().contains("ENDLESS")) {
+      System.out.print(
+          "Enter the number of bonus tries added after each succesfull guess (default = 2): ");
+      String addedInput = scanner.nextLine().trim();
+      if (!addedInput.isEmpty()) {
+        try {
+          addedLives = Integer.parseInt(addedInput);
+        } catch (NumberFormatException e) {
+          System.out.println("Invalid number format. Using default added tries = 2.");
+        }
+      }
+    }
+
+    if (objectWordLists.isEmpty()) {
+      System.out.println("No word lists loaded. Please load a word list first.");
+      return;
+    }
+    System.out.println("Available word lists:");
+    for (String key : objectWordLists.keySet()) {
+      System.out.println("- " + key);
+    }
+    System.out.print("Enter the name of the word list to use: ");
+    String listKey = scanner.nextLine().trim();
+    Pair<String, List<TreeMap<String, Field>>> chosenList = objectWordLists.get(listKey);
+    if (chosenList == null) {
+      System.out.println(
+          "No word list with that name exists. Chosen: \"Programming languages\" by default.");
+      chosenList = objectWordLists.get("Programming languages");
+    }
+
+    scanner.nextLine();
+    ObjectComparator comparator = new ObjectComparator();
+    try {
+      switch (selectedMode) {
+        case SIMPLE:
+          SimpleObjectGame simpleGame =
+              new SimpleObjectGame(comparator, chosenList.right(), lives, chosenList.left());
+          gameLoop(simpleGame, chosenList.left());
+          break;
+
+        case ENDLESS:
+          System.out.println(
+              "Endless Mode! You get " + addedLives + " bonus lives for each correct word.");
+          System.out.println("Press Enter to start...");
+          scanner.nextLine();
+
+          ObjectEndlessGame endlessGame =
+              new ObjectEndlessGame(
+                  comparator, chosenList.right(), lives, addedLives, chosenList.left());
+          HighScoreManager highScoreManager = new HighScoreManager("highscore_endless_object.txt");
+          endlessGameLoop(endlessGame, highScoreManager, chosenList.left());
+          break;
+
+        case ZEN_CLASSIC:
+          // Tryby Zen nie wymagają liczby żyć ani wyboru listy, ale ZenClassic potrzebuje listy
+          // słów.
+          ZenObjectGame zenGame =
+              new ZenObjectGame(comparator, chosenList.right(), chosenList.left());
+          gameLoop(zenGame, chosenList.left());
+          break;
+
+        default:
+          System.out.println("Invalid option.");
+          break;
+      }
+    } catch (NoSuchElementException e) {
+      System.out.println("Error creating game: " + e.getMessage());
+    }
   }
 
   /**
@@ -311,6 +446,7 @@ public class GameMenu {
   private void gameLoop(Game<?, ?> game, String key) {
     do {
       System.out.println(Ansi.ansi().eraseScreen().cursor(0, 0));
+      Printer.printColorCodeInfo();
       System.out.println("Guesses left: " + game.getTriesLeft());
       Printer.printBoard(game.getBoard(), key);
       System.out.print("\nGuess (or type 'q' to exit): ");
@@ -355,13 +491,15 @@ public class GameMenu {
    * @param highScoreManager the high score manager responsible for tracking and updating the high
    *     score
    */
-  private void endlessGameLoop(EndlessGame<?, ?> game, HighScoreManager highScoreManager) {
+  private void endlessGameLoop(
+      EndlessGame<?, ?> game, HighScoreManager highScoreManager, String key) {
     while (!game.getGameFinished()) {
       System.out.println(Ansi.ansi().eraseScreen().cursor(0, 0));
+      Printer.printColorCodeInfo();
       System.out.println("Current Score: " + game.getScore());
       System.out.println("High Score: " + highScoreManager.getHighScore());
       System.out.println("Lives left: " + game.getLives());
-      Printer.printBoard(game.getBoard(), null);
+      Printer.printBoard(game.getBoard(), key);
       System.out.print("\nGuess (or type 'q' to exit): ");
 
       String guess = scanner.nextLine().trim().toLowerCase();
@@ -382,7 +520,7 @@ public class GameMenu {
           System.out.println("Current Score: " + simulatedScore);
           System.out.println("High Score: " + highScoreManager.getHighScore());
           System.out.println("Lives left: " + simulatedLives);
-          Printer.printBoard(game.getBoard(), null);
+          Printer.printBoard(game.getBoard(), key);
           System.out.println(
               "\nCongratulations! The word was guessed: "
                   + provenTarget
@@ -402,7 +540,7 @@ public class GameMenu {
     }
 
     System.out.println(Ansi.ansi().eraseScreen().cursor(0, 0));
-    Printer.printBoard(game.getBoard(), null);
+    Printer.printBoard(game.getBoard(), key);
     System.out.println(game.getFinalGameMessage());
     System.out.println("High Score: " + highScoreManager.getHighScore());
     System.out.println("\nDo you want to play again? [y/n]");
@@ -410,7 +548,7 @@ public class GameMenu {
 
     if (option.equalsIgnoreCase("y")) {
       game.reset();
-      endlessGameLoop(game, highScoreManager);
+      endlessGameLoop(game, highScoreManager, key);
     }
   }
 }
